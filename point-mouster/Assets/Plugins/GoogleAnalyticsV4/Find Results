@@ -1,0 +1,157 @@
+Searching 106 files for "setReviewWords()"
+
+/Users/flo/Desktop/PointMouster/point-mouster/Assets/Scripts/BookScript.cs:
+  214  	}
+  215  
+  216: 	public void setReviewWords(){
+  217  		foreach (int i in reviewIndices) {
+  218  			reviewWords.Add (facts [i]); // add only the words that were picked;
+
+/Users/flo/Desktop/PointMouster/point-mouster/Assets/Scripts/ReviewScript.cs:
+   26  	}
+   27  
+   28: 	public void setReviewWords(){
+   29  		//print ("In RevScr's setRevWrds: reviewNum = " +  reviewNum);
+   30  		canSetRev++;
+
+2 matches across 2 files
+
+
+Searching 106 files for "numBooksCheck"
+
+/Users/flo/Desktop/PointMouster/point-mouster/Assets/Scripts/BookScript.cs:
+  222  	}
+  223  
+  224: 	public bool numBooksCheck(){
+  225: 		Debug.Log("in numBooksCheck()");
+  226  		return ( (getBooks % getMaxBooksVal()) == 0 ) ? true : false;
+  227  	}
+
+/Users/flo/Desktop/PointMouster/point-mouster/Assets/Scripts/PlayerController.cs:
+  186  		}
+  187  		if (other.tag == "Door") {
+  188: 			if (BookScript.bookControl.numBooksCheck ()) {
+  189  //				if (Input.GetKeyDown(KeyCode.UpArrow)) {
+  190  				//ReviewScript.updateReviewNum();
+
+3 matches across 2 files
+
+
+Searching 106 files for "GetButtonDown"
+
+/Users/flo/Desktop/PointMouster/point-mouster/Assets/Scripts/PlayerController.cs:
+  111  
+  112  		// checking jump input(space or up)
+  113: 		if (Input.GetButtonDown ("Jump") && isGrounded) {
+  114              //Debug.Log("JUMP");
+  115  			// put jumpSpeed in y to move up by moveSpeed
+
+1 match in 1 file
+
+
+Searching 106 files for "numBooksCheck()"
+
+/Users/flo/Desktop/PointMouster/point-mouster/Assets/Scripts/BookScript.cs:
+  234  	}
+  235  
+  236: 	public bool numBooksCheck(){
+  237: 		Debug.Log("in numBooksCheck()");
+  238  		return ( (getBooks % getMaxBooksVal()) == 0 ) ? true : false;
+  239  	}
+
+2 matches in 1 file
+
+
+Searching 106 files for "pickWord"
+
+/Users/flo/Desktop/PointMouster/point-mouster/Assets/Scripts/BookScript.cs:
+  184  
+  185  	/*
+  186: 	pickWord is called by PlayerController script
+  187  	when player collides with a book
+  188  	method generates random number 
+  189  	*/
+  190: 	public string pickWord(){
+  191: 		Debug.Log("in pickWord after colliding with book");
+  192  
+  193  		int pos = -1;
+  ...
+  198  			pos = generateWord();
+  199  		}
+  200: 		Debug.Log("in pickWord, total while loops= " + loops);
+  201  		reviewIndices.Add (pos); // add index to the list so it won't be picked more than once
+  202  		reviewWords.Add (facts[pos]); // add only the words that were picked;
+
+/Users/flo/Desktop/PointMouster/point-mouster/Assets/Scripts/PlayerController.cs:
+  171  			//currBook = other.GetComponent<BookScript> ();
+  172  
+  173: 			wordDisplay.text = BookScript.bookControl.pickWord ();  //Should take word from book
+  174  
+  175  
+
+5 matches across 2 files
+
+
+Searching 106 files for "updateBookTracker"
+
+/Users/flo/Desktop/PointMouster/point-mouster/Assets/Scripts/BookScript.cs:
+   29  			bookControl = this;
+   30  		} else {
+   31:             updateBookTracker();
+   32              Destroy (gameObject);
+   33  		}
+   ..
+  133  
+  134  	//increment book count and change the text
+  135: 	public void updateBookTracker(){
+  136: 		Debug.Log("in updateBookTracker");
+  137  		setNumBooksCollected(1); //increment count by 1
+  138  		Debug.Log("numBooks" + getNumBooksCollected());
+
+/Users/flo/Desktop/PointMouster/point-mouster/Assets/Scripts/PlayerController.cs:
+  159  			print("player collided with book");
+  160  			//addBook (other.name);
+  161: 			BookScript.bookControl.updateBookTracker();
+  162  			collectSound.Play ();
+  163  
+
+4 matches across 2 files
+
+
+Searching 106 files for "getInstance()"
+
+/Users/flo/Desktop/PointMouster/point-mouster/Assets/Scripts/CurrentQuestion.cs:
+   52  
+   53  	//class helper
+   54: 	private BossQuestions.Question getInstance() {
+   55  		return Instance;
+   56  	}
+   ..
+   58  	//method returns instance of CurrentQuestion's Question member
+   59  	public BossQuestions.Question getQuestInstance() {
+   60: 		return getInstance();
+   61  	}
+   62  
+
+/Users/flo/Desktop/PointMouster/point-mouster/Assets/Scripts/EnterNameScript.cs:
+   14  
+   15  	void Start () {
+   16:         //googleAnalytics = GoogleAnalyticsV4.getInstance();
+   17          if(googleAnalytics == null) {
+   18              Debug.Log("googleAnalytics == null");
+
+/Users/flo/Desktop/PointMouster/point-mouster/Assets/Plugins/GoogleAnalyticsV4/GoogleAnalyticsMPV3.cs:
+  141        Debug.Log(newUrl);
+  142      }
+  143:     GoogleAnalyticsV4.getInstance().StartCoroutine(this.HandleWWW(new WWW(newUrl)));
+  144    }
+  145  
+
+/Users/flo/Desktop/PointMouster/point-mouster/Assets/Plugins/GoogleAnalyticsV4/GoogleAnalyticsV4.cs:
+  498  
+  499    // Instance for running Coroutines from platform specific classes
+  500:   public static GoogleAnalyticsV4 getInstance() {
+  501      return instance;
+  502    }
+
+5 matches across 4 files

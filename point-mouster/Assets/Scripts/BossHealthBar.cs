@@ -36,6 +36,7 @@ public class BossHealthBar : MonoBehaviour {
 			/*BossQuestions.questionsUsed.Clear ();
 			BossQuestions.questionsAnswers.Clear ();
 			BossQuestions.currAnswers.Clear ();*/
+			Debug.Log("destroying boss");
 			Destroy (GameObject.FindGameObjectWithTag ("Boss"));
 
 		}

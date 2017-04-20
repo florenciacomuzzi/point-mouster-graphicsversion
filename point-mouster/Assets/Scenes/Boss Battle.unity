@@ -12079,7 +12079,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   fbDisplay: {fileID: 605}
   p: {fileID: 23}
-  btnPushed: {fileID: 0}
 --- !u!114 &618
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -13107,7 +13106,6 @@ MonoBehaviour:
   qCanvas: {fileID: 645}
   panel: {fileID: 661}
   answer: 0
-  index: 0
 --- !u!114 &672
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -13169,7 +13167,7 @@ MonoBehaviour:
   bundleVersion: 
   dispatchPeriod: 5
   sampleFrequency: 100
-  logLevel: 1
+  logLevel: 3
   anonymizeIP: 0
   UncaughtExceptionReporting: 0
   sendLaunchEvent: 0

@@ -9,8 +9,6 @@ public class BookScript : MonoBehaviour {
 	const int NUM_REVIEW_WORDS = 5;
 
 	public static BookScript bookControl;
-	public static int levelCount; // which level the player is on
-
 	// list of all the words
 	public string[] words;
 	public string[] facts;
@@ -23,26 +21,22 @@ public class BookScript : MonoBehaviour {
 	public int numBooks;
 	public int maxBooks;
 	public Text numBooksCollected;
-	public int currentBook;
 
 	void Awake(){
 		if (bookControl == null) {
+			Debug.Log("bookControl == null,do not destroy");
 			DontDestroyOnLoad (gameObject);
 			bookControl = this;
 		} else {
-            numBooks = bookControl.numBooks - 1;
-            updateBookTracker();
+            //updateBookTracker();
+
             Destroy (gameObject);
 		}
-			
+		
 	}
-
 
 	// Use this for initialization
 	void Start () {
-		currentBook = 0;
-		levelCount = 1;
-
 		facts = new string[] {
 			/*level 1 facts*/
 
@@ -91,122 +85,166 @@ public class BookScript : MonoBehaviour {
 			"The keyword const can be used on pointer parameters, like we do with references. It is used for a similar situation -- it allows parameter passing without copying anything but an address, but protects against changing the data (for functions that should not change the original). " +
 			"For example, \n\nconst double * v\n\nThis establishes v as a pointer to an object that cannot be changed through the pointer v.\n"
 		};
+
+		maxBooks = InitMaxBooksVal(); //max num of books to collect	
+		numBooks = InitNumBooks(); //init to 0 books collected
+
 						
 		reviewIndices = new List<int>();
 		reviewWords = new List<string> ();
-//		numBooksCollected.text = "Books: " + numBooks + "/" + maxBooks;
+		numBooksCollected.text = createBookScore("0","5");
 		if (GameObject.Find("BookScore") != null)
 			numBooksCollected = GameObject.Find("BookScore").GetComponent<Text>();
 		else
 			Debug.Log("Find bookscore is null");
-
-
 	}
 	
 	// Update is called once per frame
 	void Update () {
 		
 	}
- 
-	public void updateLevelCount(){
-		levelCount++;
+
+
+	//setter method - maxBooks 5 by default
+	private int InitMaxBooksVal(int val = 5) {
+		Debug.Log("in InitMaxBooksVal,setting maxBooks=" + val);
+		maxBooks = val;
+		return maxBooks;
+	}
+
+	//getter method
+	private int getMaxBooksVal() {
+		return maxBooks;
+	}
+
+	//initialize number of books collected to 0
+	private int InitNumBooks() {
+		Debug.Log("in InitNumBooks(), initial num books collected= 0");
+		return 0;
+	}
+
+	//default increment = 0 
+	private void setNumBooksCollected(int increment = 0) {
+		numBooks += increment;
+	}
+
+	private int getNumBooksCollected() {
+		return numBooks;
 	}
 
 	//increment book count and change the text
 	public void updateBookTracker(){
 		Debug.Log("in updateBookTracker");
-		numBooks++;
-		print("numBooks" + numBooks);
-        numBooksCollected = GameObject.Find("BookScore").GetComponent<Text>();
-        print("maxBooks" + maxBooks);
-        numBooksCollected.text = "Books: " + numBooks + "/5"; //+ maxBooks;
+		setNumBooksCollected(1); //increment count by 1
+		Debug.Log("numBooks" + getNumBooksCollected());
+		setBookTrackerDisplay(-1, -1, false); //set to false so dummy params not used!!
+	}
+
+	/*
+	called by updateBookTracker
+	initialize to 0/0 by setting useDefaultVals= true 
+	will use default args if none provided
+	set useDefaultVals to false if do not want dummy params to set score display!
+	*/
+	private void setBookTrackerDisplay(int curr = 0, int max = 0, bool useDefaultVals = true) {
+		Debug.Log("in setBookTrackerDisplay");
+		int current = curr;
+		int maximum = max;
+		if(!useDefaultVals) {
+			Debug.Log("score display not set custom");
+			current = getNumBooksCollected();
+			maximum = getMaxBooksVal();
+		}
+		numBooksCollected = GameObject.Find("BookScore").GetComponent<Text>();
+        numBooksCollected.text = createBookScore(current.ToString(), maximum.ToString());
+	}
+
+	//returns num of books collected to display as string
+	private string createBookScore(string current, string maximum) {
+		Debug.Log("creating book score with x/y, " + current + maximum);
+		// In local variables (i.e. within a method body)
+        // you can use implicit typing.
+		var temp = "Facts: " + current + "/" +  maximum;
+		return temp;
+	}
+
+	//returns a random number index based on level
+	private int generateWord() {
+		Scene scene = SceneManager.GetActiveScene();
+		Debug.Log("Active scene is " + scene.name);
+		int chosenWordIndex = -1;
+		switch (scene.name) {
+			case "Level1" : chosenWordIndex = Random.Range(0,5);
+			    			break;
+			case "Level2" : chosenWordIndex = Random.Range(10,15);
+			    			break;
+			case "Level3" : chosenWordIndex = Random.Range(10,15);
+			    			break;
+			default		  : Debug.Log("behavior is not set for this level/scene");
+			    			chosenWordIndex = Random.Range(0,5);
+			    			break;
+		}
+		if(chosenWordIndex == -1) {
+			Debug.Log("some error occurred in generating word number=" + -1);
+		} 
+		return chosenWordIndex;
 	}
 
 
 	/*
 	pickWord is called by PlayerController script
 	when player collides with a book
-
 	method generates random number 
 	*/
+	public string pickWord(){
+		Debug.Log("in pickWord after colliding with book");
 
-
-		public string pickWord(){
-		print("in pickWord after colliding with book");
-		//int randomNumber = Random.Range (0, words.Length);
-
-		Scene scene = SceneManager.GetActiveScene();
-		print("Active scene is " + scene.name);
-		int chosenWordIndex = -1;
-
-		if(scene.name == "Level1"){
-			chosenWordIndex = Random.Range(0,5);
-			print("in BookScript outside while 1. index is ");
-			print (chosenWordIndex);
-			while(isWordUsed(chosenWordIndex)){ //make sure you haven't displayed this fact already
-				chosenWordIndex = Random.Range(0,5);
-				print("in BookScript while 1. index is " + chosenWordIndex);
-			}
-
+		int pos = -1;
+		pos = generateWord();
+		int loops = 0;
+		while(isWordUsed (pos) && (loops < (facts.Length -1))) {
+			loops++;
+			pos = generateWord();
 		}
-
-		if(scene.name == "Level2"){
-			chosenWordIndex = Random.Range(10,15);
-			while(isWordUsed(chosenWordIndex)){
-				chosenWordIndex = Random.Range(5,10);
-				print("in BookScript while 2. index is " + chosenWordIndex);
-			}
-
-		}
-		if(scene.name == "Level3"){
-			chosenWordIndex = Random.Range(10,15);
-							print("in BookScript while . index is " + chosenWordIndex);
-
-			while(isWordUsed(chosenWordIndex)){
-				chosenWordIndex = Random.Range(10,15);
-				print("in BookScript while 3. index is " + chosenWordIndex);
-			}
-		}
-
-
-//		while (isWordUsed (chosenFactIndex)) {
-//			currentBook++;
-//		}
-
-		reviewIndices.Add (chosenWordIndex); // add index to the list so it won't be picked more than once
-
-		return facts [chosenWordIndex];
+		Debug.Log("in pickWord, total while loops= " + loops);
+		reviewIndices.Add (pos); // add index to the list so it won't be picked more than once
+		reviewWords.Add (facts[pos]); // add only the words that were picked;
+		return facts[pos];
 	}
 
 
-	public void ResetBooks(){
-		numBooks = 0;
-		reviewWords.Clear ();
+	public void ResetBooks() {
+		Debug.Log ("in ResetBooks...");
+		numBooks = InitNumBooks(); //set numBooks = 0
+		reviewWords.Clear ();  //clears list of review words used
 		//reviewIndices.Clear ();
 	}
 
+	//checks if word has been used with pos key
 	public bool isWordUsed (int wordIndex){
-
 		foreach (int i in reviewIndices) {
 			if ( wordIndex == i ) {
+				Debug.Log("word with idx= " + i + " is used");
 				return true;
 			}
 		}
+		Debug.Log("word has not been used");
 		return false;
 	}
 
-	public void setReviewWords(){
-		foreach (int i in reviewIndices) {
-			reviewWords.Add (facts [i]); // add only the words that were picked;
-		}
-		//ReviewScript.updateReviewNum();
-	}
+	
 	public List<string> getReviewWords(){
+		Debug.Log("in getReviewWords(),returns List<string>");
 		return reviewWords;
 	}
 
+	//returns true if all books have been collected
 	public bool numBooksCheck(){
-		return ( (numBooks % 5) == 0 ) ? true : false;
+		Debug.Log("in numBooksCheck()");
+		if(getNumBooksCollected() == 0) {
+			return false;
+		}
+		return ((getNumBooksCollected() % getMaxBooksVal()) == 0 ) ? true : false;
 	}
 
 

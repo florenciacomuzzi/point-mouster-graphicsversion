@@ -9,12 +9,12 @@ public class BossQuestions : MonoBehaviour {
 
 	public GoogleAnalyticsV4 googleAnalytics;
 	
-
 	public class Question
 	{
 		public string question;
 		public List<string> choices;
-		public string answer;
+		public string answer; //pos of correct choice in zero-indexed choices List
+
 		public Question (string q, string ch1, string ch2, string ch3, string ch4, string a)
 		{
 			question = q;
@@ -24,6 +24,65 @@ public class BossQuestions : MonoBehaviour {
 			choices.Add(ch3);
 			choices.Add(ch4);
 			answer = a;
+		}
+		
+		//default constructor
+		public Question ()
+		{
+			question  = "defaultQuestion";
+			choices = new List<string>();
+			choices.Add("choice1");
+			choices.Add("choice2");
+			choices.Add("choice3");
+			choices.Add("choice 4");
+			answer = "-1";
+		}
+
+		//copy constructor
+		public Question (Question obj)
+		{
+			this.setQuestionStr(obj.getQuestionStr());
+			for(int pos = 0; pos < 4; pos++){
+				this.setChoiceStr(pos, obj.getChoiceStr(pos));
+			}
+			this.setAnswerStr(obj.getQuestionAnswer());
+		}
+					
+		//get choice -- choices List is zero-indexed
+		public string setChoiceStr(int pos = -1, string str = "default choice str"){
+			return choices[pos] = str;
+		}
+
+		private string setAnswerStr(string str = "default answer string") {
+			answer = str;
+			return answer;
+		}
+
+		//get choice -- choices List is zero-indexed
+		public string getChoiceStr(int pos){
+			return choices[pos];
+		}
+
+		//get question str
+		public string getQuestionStr() {
+			return question;
+		}
+
+		//public void setChoices(string ) 
+
+		//set question str
+		public void setQuestionStr(string question = "default question str") {
+			this.question = question;
+		}
+
+		//get answer 
+		public string getQuestionAnswer() {
+			return answer;
+		}
+
+		//get answer 
+		public int getQuestionAnswerInInt() {
+			return int.Parse(answer);
 		}
 	}
 
@@ -46,28 +105,21 @@ public class BossQuestions : MonoBehaviour {
 	public List<string> keyList;
 	public static List<string> currAnswers; //Array used to make sure answers aren't repeated
 	public string[] multiple_choice; //Array of multiple choice options
-
-	//public string[] words;
-	int numQuestions;
 	public List<Question> questions;
 	
 	//public string[] negFB;
 
-	
-	/*
-	correct_index is used in ButtonPushed script when a player chooses an answer
-	*/
-	public static int correct_index;
 	/*
 	questionsUsed has items added by ButtonPushed script
 	whenever a player is done answering a question
 	*/
-	//public static List<string> questionsUsed;
-	public static List<Question> questionsUsed;
-	public static List<int> indexUsed;
+	//public static List<Question> questionsUsed;
+	public static List<int> indexUsed; // stores int positions of questions used
 	
 	// Use this for initialization
 	void Start () {
+		//googleAnalytics.StartSession(); //must have before logging in every object's Start
+
 		questions = new List<Question>();
 
 		/* Level 1 Questions */
@@ -86,7 +138,7 @@ public class BossQuestions : MonoBehaviour {
 			"free(ptrarr)", "delete[] ptrarr", "delete *ptrarr", " ~ *ptrarr", "1"));  
 		//question 5
 		questions.Add (new Question ("What problem/error will likely result from the following code?\n\tint * ptr = NULL;\n\t{ \nint x; \t\nptr = &x;\n}\n",
-			"Memory Leak", "Type Mismatch", "Dangling Pointer", "Segmentation Fault", ""));
+			"Memory Leak", "Type Mismatch", "Dangling Pointer", "Segmentation Fault", "2"));
 
 		/* Level 2 Questions */
 
@@ -119,10 +171,10 @@ public class BossQuestions : MonoBehaviour {
 			"&ptr2 = ptr1", "ptr2 = ptr1", "ptr2 = new int[5];\nfor(int i = 0; i<5; i++)\n\t{ptr2[i] = ptr1[i]};", "ptr2 = new int[5];\nfor(int i = 0; i<5; i++)\n\t{*ptr1[i] = *ptr2[i]}", "1")); 
 		//question 4
 		questions.Add (new Question ("Given the following declarations:\n\tint * ptr1;\n\tint * ptr2;\n\tptr1 = new int[5];\n\twhat statement will produce a deep copy ? ",
-			"&ptr2 = ptr1", "ptr2 = ptr1", "ptr2 = new int[5];\nfor(int i = 0; i<5; i++)\n\t{ptr2[i] = ptr1[i]};", "'ptr2 = new int[5];\nfor(int i = 0; i<5; i++)\n\t{*ptr1[i] = *ptr2[i]}", "2")); 
+			"&ptr2 = ptr1", "ptr2 = ptr1", "ptr2 = new int[5];\nfor(int i = 0; i<5; i++)\n\t{ptr2[i] = ptr1[i];}", "'ptr2 = new int[5];\nfor(int i = 0; i<5; i++)\n\t{*ptr1[i] = *ptr2[i]}", "2")); 
 		//question 5
 		questions.Add (new Question (" Given the function: \nbool isFound(const char *chrPtr, char c){\n}\nWhich of the following would be the correct declaration for declaring a variable which will traverse 'const chrPtr *someText' ?\n",
-			"const *ptr;", "const char ptr;", "const char *ptr;", "char *ptr;", "2"));
+			"const *ptr;", "const char ptr;", "const de *ptr;", "char *ptr;", "2"));
 
 		/* Unused Questions */
 
@@ -143,12 +195,9 @@ public class BossQuestions : MonoBehaviour {
 //		questions.Add (new Question ("Given the following declaration of a 2D integer array within a class-\n\tint ** nums;\n\tnums = new int*[5]\n\tfor(int i=0; i<5; i++)\n\t\tnums[i] = new int[10];\n\t How would you implement the destructor ? ",
 //			"delete [ ] nums", "delete [ ][ ] nums", "delete *nums", "None of the above", "3"));
 
-		
-		numQuestions = questions.Count;
-
 		//answerOptions = new List<string>[NumOptions];
 		//answerOptions = new List<string> (); //I Don't knwo what thsi is
-		questionsUsed = new List<Question> ();
+		//questionsUsed = new List<Question> ();
 		//currAnswers = new List<string> (); // I dont' know what this is
 		//parseCorrectWords ();
 		indexUsed = new List<int>();
@@ -166,8 +215,14 @@ public class BossQuestions : MonoBehaviour {
 	}
 
 
-	public string getAnswer() {
-		return questions[indexUsed[indexUsed.Count-1]].answer;
+	//checks if submitted correct answer for current question
+	public bool checkInput(string btnPushed) {
+		if(!CurrentQuestion.currQuestionStaticInstance.iscurrQuestionStaticInstanceNull()) {
+			if(btnPushed.Equals(CurrentQuestion.currQuestionStaticInstance.getQuestInstance().getQuestionAnswer())) {
+				return true; //user inputted correct answer
+			}
+		}
+		return false; //instance not set or wrong answer inputted
 	}
 
 	
@@ -192,226 +247,128 @@ public class BossQuestions : MonoBehaviour {
 		return false;
 	}
 
-	/*
-	public bool isQuesUsed(string check){
-		foreach (string i in questionsUsed) {
-			if (i == check)
-				return true;
-		}
-		return false;
-	}
-	*/
-	/*
-	// sets map with questions and answers
-	public void parseCorrectWords(int arrPos){
-
-		//foreach (string str in BookScript.bookControl.words) {
-		//foreach (string str in words) {
-			/*
-			if (isRevWord (str)) { // if in review, ignore it
-				print("in set words for loop");
-				//set review word in QA Map
-				parseStr (str);
-				questionsAnswers [answer] = questionTemp;
-				continue; // go to next iteration
-			}
-
-			//only add words that weren't in review as non-correct answer options
-			print("outside of set words for loop");
-			parseStr (str);
-			answerOptions.Add (questionTemp);
-			print ("IN PARSEWORDS " + answer);
-
-		}
-		*/
-		/*string str = words[arrPos];
-		parseStr(str);
-		//}
-	}*/
-
-
 	public string getQuestionTempStr(){
 		return questionTemp;
 	}
 
-
+	// returns index of randomly chosen question to be used as key in questions List
 	public int pickQuestion(){
-		print("inside pickQuestion");
-		
-		//check level 
+		Debug.Log("inside pickQuestion");
+		isListEmpty(questions);
 		Scene scene = SceneManager.GetActiveScene();
-		print("Active scene is " + scene.name);
-		print("level is " + MenuButtons.currLevel);
+		Debug.Log("Active scene is " + scene.name);
 		int chosenQuestIndex = -1;
-
-//		if(scene.name == "Boss Battle"){
-//			chosenQuestIndex = Random.Range(0,4);
-//			while(indexUsed.Contains(chosenQuestIndex)){ //make sure you haven't used this question already
-//				chosenQuestIndex = Random.Range(0,4);
-//
-//			}
-//
-//		}
-		Debug.Log("current Level: " + MenuButtons.currLevel);
-
-
-		if(scene.name == "Boss Battle"){
-			chosenQuestIndex = Random.Range(0,4);
-			while(indexUsed.Contains(chosenQuestIndex)){ //make sure you haven't used this question already
-				chosenQuestIndex = Random.Range(0,4);
-
-			}
-
-		}
-
-		if(scene.name == "Boss Battle"  && (MenuButtons.currLevel == 2) ){
-			chosenQuestIndex = Random.Range(5,9);
-			while(indexUsed.Contains(chosenQuestIndex)){
-				chosenQuestIndex = Random.Range(5,9);
-			}
-
-		}
-
-		if(scene.name == "Boss Battle 2"){
-			chosenQuestIndex = Random.Range(10, 15); //changed for this build to make level 2 into level 3
-			while(indexUsed.Contains(chosenQuestIndex)){
-				chosenQuestIndex = Random.Range(5,9);
-			}
-
-		}
-
-		if(scene.name == "Boss Battle 3"){
-			chosenQuestIndex = Random.Range(10,15);
-			Debug.Log("chosen index " + chosenQuestIndex);
-			while(indexUsed.Contains(chosenQuestIndex)){
-			Debug.Log("in while 3, chosen index " + chosenQuestIndex);
-
-				chosenQuestIndex = Random.Range(10,15);
-			}
-		}
-
-		
+		int loops = 0;
+		do {
+			chosenQuestIndex = generateNum();
+			loops += 1;
+		} while(loops < questions.Count && (isIndOutOfBounds(chosenQuestIndex) || isQuesUsed(chosenQuestIndex)) ); //generate another number if question already used or quest ind out of bounds
 		indexUsed.Add(chosenQuestIndex); //add to questions used so it is not used again
-		//parseCorrectWords(chosenQuestIndex);
-		Debug.Log("index returned: " + chosenQuestIndex);
+		Debug.Log("chosen question Index: " + chosenQuestIndex);
+		updateCurrentQuestion(chosenQuestIndex);	
 		return chosenQuestIndex;
 	}
-	
 
-	/*
-	public string pickQuestion(){
-		//list of all keys in questionAnswers
-		print("inside pickQuestion");
-		//check level first, if level 1 question 1-5
-		int quest = Random.Range(0,5);
-
-		keyList = new List<string> (questionsAnswers.Keys);
-
-		//assign element at a random index from 0 to size of keyList to the string randomKey (will be our question)
-		//string randomKey = keyList[Random.Range(0, keyList.Count-1)];
-		string randomKey = keyList[Random.Range(0, 3)];
-		print ("randomkey chose:");
-		print (randomKey);
-		while (isQuesUsed (randomKey)) {
-		  randomKey = keyList[Random.Range(0, keyList.Count-1)];
+	// updates current question with new question chosen
+	private void updateCurrentQuestion(int chosenQuestIndex) {
+		if( !CurrentQuestion.currQuestionStaticInstance.iscurrQuestionStaticInstanceNull() ){
+			Debug.Log("cannot update CurrentQuestion due to error");
 		}
-		assignAnswers (questionsAnswers [randomKey]);  
-		return randomKey;
+		if(isIndOutOfBounds(chosenQuestIndex) ) {
+			Debug.Log("ERROR in updateCurrentQuestion(), out of bounds index");
+		}
+		CurrentQuestion.currQuestionStaticInstance.updateQuestion(questions[chosenQuestIndex], chosenQuestIndex);
 	}
-	*/
+
+
+	//returns random number based on level
+	private int generateNum() {
+		//check level 
+		Scene scene = SceneManager.GetActiveScene();
+		Debug.Log("Active scene is " + scene.name);
+		int num = -1;
+		switch(scene.name) {
+			case "Boss Battle"	 : if(MenuButtons.currLevel ==2) goto case "L2";
+								   num = Random.Range(0,5);
+								   break;
+			case "L2"		  	 : num = Random.Range(5,10);
+								   break;
+			case "Boss Battle 2" : num = Random.Range(10, 14);
+								   break;
+			case "Boss Battle 3" : num = Random.Range(10,14);
+								   break;
+			default              : Debug.Log ("behavior for this scene is not set, scene.name =" + scene.name);
+								   num = Random.Range(0,5);
+								   break;
+		}
+		Debug.Log("num generated= "+ num);
+		return num;
+	}
 
 	/*
-	public void assignAnswers(string correct){
-		correct_index = Random.Range (0, NumChoices-1);
-		print("The correct index inside bossquestions is:");
-		print(correct_index);
-	
-		multiple_choice = new string[NumChoices];
-		multiple_choice [correct_index] = correct;
-		currAnswers.Add (correct);
-
-		for (int i = 0; i <= NumChoices-1; i++) {
-			if (i != correct_index) {
-				/*
-				int rand = Random.Range (0, answerOptions.Count - 1);
-				string ans = answerOptions [rand];
-
-
-				while (currAnswers.Contains (ans)) {
-					rand = Random.Range (0, answerOptions.Count - 1);
-					ans = answerOptions [rand];
-				}
-				//if (answerOptions [rand] != correct )
-				multiple_choice [i] = ans;
-				currAnswers.Add (ans);
-				*/
-				/*multiple_choice[i] = answer;
-
-			}
-			else
-				continue;
-		
+    return Question object found at questions[index] or empty question if questions List is empty or index out of bounds
+	*/
+	public Question getQuestAtInd(int index) {
+		if(isIndOutOfBounds(index)) {
+			return new Question(); 
 		}
+		return questions[index];
+	} 
 
-		currAnswers.Clear ();
-
-	}*/
-
-
-/*	public bool isQuestionUsed(string word){ // check if question was already used
-		foreach (string str in questionsAnswers.Keys) {
-			if ( word == str ) {
-				return true;
-			}
-		}
-		return false;
-	}*/
-
-	//checks if player got question correct
-	public bool checkAnswer(string playerAnswer){
-		print("answer is "+ questions[indexUsed[indexUsed.Count-1]].answer);
-		//if (questions[indexUsed[indexUsed.Count-1]].answer.Equals (playerAnswer)) {
-		if (questions[indexUsed[indexUsed.Count-1]].answer.Equals (playerAnswer)) {
+	//returns true if chosen question ind out of bounds
+	public bool isIndOutOfBounds(int index) {
+		if(index > questions.Count -1 || index < 0) {
+			Debug.Log("index is out of bounds, idx= " + index);
 			return true;
 		}
-		/*
-
-		EventHitBuilder eventHitBuilder = new EventHitBuilder();
-            	eventHitBuilder.SetEventCategory (playerAnswer);
-            	eventHitBuilder.SetEventLabel ("");
-            	eventHitBuilder.SetEventValue (2);
-            	string playerName = PlayerPrefs.GetString ("CurrentPlayer");
-				if (playerName != null)
-    				eventHitBuilder.SetEventAction (playerName);
-				else
-    				eventHitBuilder.SetEventAction ("No name");
-    			googleAnalytics.LogEvent (eventHitBuilder);
-		*/
-		
-		googleAnalytics.LogEvent (new EventHitBuilder ()
-			.SetEventCategory (playerAnswer)
-			.SetEventAction (indexUsed.ToString())//indexUsed - cast to string
-			.SetEventLabel ("Player Name")//not sure what this is supposed to be
-			.SetEventValue (1)); //When we create mode for game, it should be entered HERE
-			//ver = Version.getVersion();
-
-
-		/*LOG INCORRECT answer only
-		* category incorrectAnswer which choice selected
-		 * action questionIndex - index of question used
-		 * label Name - ??????
-		 * vaule answer (incorrect) - ????? index of answer seleceted?
-		 * /*/	
 		return false;
+	}
 
-		
+	//returns true if list is empty
+	public bool isListEmpty(List<Question> list) {
+		if(list.Count < 1){
+			return true;
+		}
+		return false;
+	}
+
+	//returns true if question has been used
+	public bool isQuesUsed(int idx) {
+		if(indexUsed.Contains(idx)){
+			Debug.Log("question already used, quest idx= " + idx);
+			return true;
+		}
+		return false;
+	}
+
+	
+	//checks if player got question correct
+	public bool checkAnswer(string playerAnswer){
+		//print("answer is "+ questions[indexUsed[indexUsed.Count-1]].answer);
+		string answer = CurrentQuestion.currQuestionStaticInstance.getQuestionAnswer();
+		Debug.Log("answer received from CurrentQuestion= " + answer);
+		if (answer.Equals (playerAnswer)) {
+			return true;
+		}
+		return false;
+	}
+
+	//returns index representing pos of correct answer
+	public int getAnswerIndex(int questionIndex){
+		return questions[questionIndex].getQuestionAnswerInInt();
+	}
+
+	public void setDisplay() {
+
 	}
 
 
 	void OnTriggerEnter2D(Collider2D other){
+		Debug.Log("component with BossQuestions attached collided with other,gameObject.name= " + gameObject.name);
 		if (other.tag == "Player") {
+			Debug.Log("other.tag = " + other.tag);
 			//parseCorrectWords ();
-			pickQuestion ();
+			//pickQuestion ();
 		}
 	}
 	

@@ -6,7 +6,8 @@ using UnityEngine.SceneManagement;
 
 public class ReviewScript : MonoBehaviour {
 
-	const int NUM_REVIEW_WORDS = 4;
+	public static ReviewScript Instance;
+	const int NUM_REVIEW_WORDS = 5;
 	public static int reviewNum = 1;
 	public int canSetRev = 2; //used to mod
 	public Text revWord1, revWord2, revWord3, revWord4, revWord5;

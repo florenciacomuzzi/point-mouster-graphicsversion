@@ -7,21 +7,17 @@ public class EnterNameScript : MonoBehaviour {
 
 	public GoogleAnalyticsV4 googleAnalytics;
 
-    public static EnterNameScript Instance; //used to access ver from FeedbackPanel script
+    public EnterNameScript instance;
 
     public Text NameInputFieldText;
     public Text RequiredText;
-    public string Name;
-    public int ver;
 
-	// Use this for initialization
 	void Start () {
-        //why -1?
-		ver = -1;
-
-        Name = null;
-
-	
+        googleAnalytics = GoogleAnalyticsV4.getInstance();
+        if(googleAnalytics == null) {
+            Debug.Log("googleAnalytics == null");
+        }
+        //googleAnalytics.StartSession(); //must have before logging in every object's Start
 	}
 
     void Awake() {
@@ -37,33 +33,45 @@ public class EnterNameScript : MonoBehaviour {
     //Checks to see if Input is empty and shows warning sign if it is
     //Saves it in PlayerPrefs and continues to Level1 scene otherwise
     public void Continue()
-    {
-        Name = NameInputFieldText.text.Trim();
+    {   
+        string Name = getUserName ();
         Debug.Log("Name is " + Name);
         if (string.IsNullOrEmpty(Name))
         {
             RequiredText.text = "*Required";
             return;
         }
-        ver = Version.Instance.version;
-        Debug.Log("in EnterNameScript: version = " + ver);
-
+        /* 
+        PlayerPrefs is class in UnityEngine
+        Stores and accesses player preferences between game sessions
+        SetString method sets the value of the preference identified by key
+        key = "CurrentPlayer" value = Name
+        */
         PlayerPrefs.SetString("CurrentPlayer", Name);
+        Debug.Log("setting user name in PlayerPrefs...");
+
+        int ver = Version.Instance.getVersion();
+        Debug.Log("in EnterNameScript: version = " + ver);
+        
 		googleAnalytics.LogEvent (new EventHitBuilder ()
-			.SetEventCategory ("ModeOfPlay")
-			.SetEventAction (Name)
-			.SetEventLabel ("")
-			.SetEventValue (ver)); //When we create mode for game, it should be entered HERE
+			.SetEventCategory ("ModeOfPlay")   //is shown in Analytics
+			.SetEventAction (Name)             //is shown in Analytics
+			.SetEventLabel (ver.ToString())    //is shown in Analytics
+			.SetEventValue (ver) //When we create mode for game, it should be entered HERE
+            .SetCustomMetric (1, ver.ToString()) //unique index for ModeOfPlay metric in GA, version number
+        );
+        Debug.Log("loading Level1 scene");
         SceneManager.LoadScene("Level1");
     }
 
-    public void BackToTitle()
-    {
-        SceneManager.LoadScene("TitleScreen");
+
+    private string getUserName() {
+        Debug.Log("getting input in NameInputFieldText");
+        return NameInputFieldText.text.Trim();
     }
 
-
-    private int getVersion(){
-        return ver;
+    public void BackToTitle()
+    {   Debug.Log("in BackToTitle() loading TitleScreen...");
+        SceneManager.LoadScene("TitleScreen");
     }
 }

@@ -53,24 +53,36 @@ public class PlayerController : MonoBehaviour {
 
 	public List<string> bookNames = new List<string> ();
 
+	public enum GAMetricIdx {
+			MODEOFPLAY = 1, 
+			ANSWERINPUT = 2,
+    		LEVELREACHED = 3,
+    		WRONG_ANS = 4 ,
+    		CORRECT_ANS = 5,
+    		ERROR = 6, 
+    		WON //not a metric but using for method
+	};
+
 
 	// Use this for initialization
 	void Start () {
+		//googleAnalytics.StartSession(); //must have before logging in every object's Start
         facingRight = true;
 		health = FindObjectOfType<HealthBar> ();
 		myRigidBody = GetComponent<Rigidbody2D> (); // rigid body for physics
 		myAnim = GetComponent<Animator> (); // animator for anim changes
 		//numBooksCollected.text = "Books: " + numBooks + "/" + maxBooks;
 		isPaused = false;
-		//wordDisplay.text = "";
+		wordDisplay.text = "What will you learn today?";
 		respawnPosition = new Vector3 (-9.42f, 0.56f, 0);
 
 		if(gameButton == null){
 			Debug.Log("gameButton == null");
 			//gameButton = GameObject.FindGameObjectsWithTag("CanvasTag");
 		}
-        
+		//googleAnalytics.StartSession();
 	}
+
     void Flip(float horizontal)//flip to go backward
     {
         if((horizontal > 0 && !facingRight) || horizontal < 0 && facingRight)
@@ -83,9 +95,9 @@ public class PlayerController : MonoBehaviour {
     }
 	// Update is called once per frame
 	void Update () {
-
 		//pressing x closes canvas 
 		if (Input.GetKeyDown (KeyCode.X)) {
+			Debug.Log ("keydown, Clear WordDisplay");
 			gameButton.ClearWordDisplay ();
 		}
 
@@ -94,22 +106,15 @@ public class PlayerController : MonoBehaviour {
         Flip(horizontal);
 		isGrounded = Physics2D.OverlapCircle (groundCheck.position,groundCheckRadius,whatIsGround);
 
-		//HorizontaL input is either 0(no input), 1(going right), or -1(going left)
-
-		//checking RIGHT input
-		if (Input.GetAxisRaw ("Horizontal") > 0f) {         //don't change y value
+		//HORIZONTAL INPUT is either 0(no input), 1(going right), or -1(going left)
+		float virtualAxisVal = Input.GetAxisRaw ("Horizontal");
+		if (virtualAxisVal > 0f) {         //don't change y value     //checking RIGHT input
 			myRigidBody.velocity = new Vector3 (moveSpeed, myRigidBody.velocity.y, 0f);
 			//transform.localScale = new Vector3 (3f, 3f, 1f); // 3 b/c that's the sprites scale
-		} 
-
-		//Checking LEFT input
-		else if (Input.GetAxisRaw ("Horizontal") < 0f) {
+		} else if (virtualAxisVal < 0f) {			//Checking LEFT input
 			myRigidBody.velocity = new Vector3 (-moveSpeed, myRigidBody.velocity.y, 0f);
 			//transform.localScale = new Vector3 (-3f, 3f, 1f);
-		} 
-		//NO INPUT
-		else {
-     
+		} else {			//NO INPUT
 			myRigidBody.velocity = new Vector3 (0f, myRigidBody.velocity.y, 0f);
 		}
         //Debug.Log(isGrounded);
@@ -156,167 +161,93 @@ public class PlayerController : MonoBehaviour {
 //		}
 
 	}
-		
+	
+	//method used to disable book
+	private void disableComponent(Collider2D component) {
+		Debug.Log("in disableComponent");
+		component.GetComponent<SpriteRenderer> ().enabled = false;
+		component.GetComponent<BoxCollider2D> ().enabled = false;
+	}		
 
+	//helper method: after user collects a book, another book is prepped for display
+	private void prepNextWord() {
+		Debug.Log("in prepNextWord, setting text of wordDisplay");
+		wordDisplay.text = BookScript.bookControl.pickWord (); 
+	}
+
+	//Sent when another object enters a trigger collider attached to this object
 	void OnTriggerEnter2D(Collider2D other){
 		// handle respawn
 		if (other.tag == "Book") {
-			print("player collided with book");
-			addBook (other.name);
-//			numBooks++;
-//			numBooksCollected.text = "Books: " + numBooks + "/" + maxBooks;
-
-			//BookScript.bookControl.updateBookTracker();
-
+			Debug.Log("player collided with book");
+			BookScript.bookControl.updateBookTracker();
 			collectSound.Play ();
-
-			other.GetComponent<SpriteRenderer> ().enabled = false;
-			other.GetComponent<BoxCollider2D> ().enabled = false;
-
-			//currBook = other.GetComponent<BookScript> ();
-
-
-			wordDisplay.text = BookScript.bookControl.pickWord ();  //Should take word from book
-
-
-			Destroy (other.gameObject, 1);
-
+			disableComponent(other);
+			prepNextWord();
+			Destroy (other.gameObject, 1);  //destroy book
 			Time.timeScale = 0.0f;
-		}
-		if (other.tag == "Door") {
+		} else if (other.tag == "Door") {
+			Debug.Log("user collided with door");
 			if (BookScript.bookControl.numBooksCheck ()) {
+				Debug.Log("user collected all facts");
 //				if (Input.GetKeyDown(KeyCode.UpArrow)) {
 				//ReviewScript.updateReviewNum();
 				//ReviewScript.reviewNum++;
-				BookScript.bookControl.setReviewWords ();
+				//BookScript.bookControl.setReviewWords ();
 				Debug.Log("Going to review for Level 1");
 				SceneManager.LoadScene ("Review1");
 //				}
+			} else {
+				Debug.Log ("ERROR User is at door but did not collect all books");
 			}
-		}
-		//boss 1 door
-		if (other.tag == "Door2") {
+		} else if (other.tag == "Door2") { //boss 1 door
+			Debug.Log("collided with door2...boss 1 door");
 			if (BossHealthBar.current == 0) {
-
-				EventHitBuilder eventHitBuilder = new EventHitBuilder();
-            	eventHitBuilder.SetEventCategory ("LevelReached");
-            	eventHitBuilder.SetEventLabel ("");
-            	eventHitBuilder.SetEventValue (2);
-            	string playerName = PlayerPrefs.GetString ("CurrentPlayer");
-				if (playerName != null)
-    				eventHitBuilder.SetEventAction (playerName);
-				else
-    				eventHitBuilder.SetEventAction ("No name");
-    			googleAnalytics.LogEvent (eventHitBuilder);
-				/*
-				Category -- LevelReached
-				Action --name (e.g. chavashulman@gmail.com)
-				Label -- blank
-				Value -- level # 
-				
-				googleAnalytics.LogEvent (new EventHitBuilder ()
-					.SetEventCategory ("LevelReached")
-					.SetEventAction (EnterNameScript.Instance.Name)
-					.SetEventLabel ("")
-					.SetEventValue (2)); //When we create mode for game, it should be entered HERE
-				*/
-
-
-				//SceneManager.LoadScene ("Level2");
-					//Changing this so that we can get something to work
-					SceneManager.LoadScene("Level2");
+				Debug.Log ("boss health=0... log event and load scene 2");
+				recordLevelReached(GAMetricIdx.LEVELREACHED, GAMetricIdx.LEVELREACHED.ToString(), "2", (int)GAMetricIdx.LEVELREACHED);
+				//Changing this so that we can get something to work
+				BookScript.bookControl.ResetBooks ();
+				SceneManager.LoadScene("Level2");
+			} 
+			Debug.Log("boss health != 0.... cannot load level2");
+		} else if (other.tag == "level2Door") {
+			Debug.Log("collided with level 2 door");
+			if (BookScript.bookControl.numBooksCheck ()) {
+				Debug.Log("user collected all facts");
+//				if (Input.GetKeyDown(KeyCode.UpArrow)) {
+				//ReviewScript.updateReviewNum();
+				//ReviewScript.reviewNum++;
+				//BookScript.bookControl.setReviewWords ();
+				//Debug.Log("Going to review for Level 2");
+				//SceneManager.LoadScene ("Review1");
+				Debug.Log("Going to Boss Battle 2 scene");
+				SceneManager.LoadScene("Boss Battle 2");
+//				}
+			} else {
+				Debug.Log ("ERROR User is at door but did not collect all books");
 			}
-		}
-
-		if (other.tag == "level2Door") {
-			if (BossHealthBar.current == 0) {
-
-				EventHitBuilder eventHitBuilder = new EventHitBuilder();
-            	eventHitBuilder.SetEventCategory ("LevelReached");
-            	eventHitBuilder.SetEventLabel ("");
-            	eventHitBuilder.SetEventValue (2);
-            	string playerName = PlayerPrefs.GetString ("CurrentPlayer");
-				if (playerName != null)
-    				eventHitBuilder.SetEventAction (playerName);
-				else
-    				eventHitBuilder.SetEventAction ("No name");
-    			googleAnalytics.LogEvent (eventHitBuilder);
-				/*
-				Category -- LevelReached
-				Action --name (e.g. chavashulman@gmail.com)
-				Label -- blank
-				Value -- level # 
-				
-				googleAnalytics.LogEvent (new EventHitBuilder ()
-					.SetEventCategory ("LevelReached")
-					.SetEventAction (EnterNameScript.Instance.Name)
-					.SetEventLabel ("")
-					.SetEventValue (2)); //When we create mode for game, it should be entered HERE
-				*/
-
-
-				//SceneManager.LoadScene ("Level2");
-					//Changing this so that we can get something to work
-					SceneManager.LoadScene("Boss Battle 2");
-			}
-		}
-
-		if (other.tag == "Door3") {
+		} else if (other.tag == "Door3") {
 			if (BossHealthBar.current == 0){
-
-				EventHitBuilder eventHitBuilder = new EventHitBuilder();
-            	eventHitBuilder.SetEventCategory ("LevelReached");
-            	eventHitBuilder.SetEventLabel ("");
-            	eventHitBuilder.SetEventValue (3);
-            	string playerName = PlayerPrefs.GetString ("CurrentPlayer");
-				if (playerName != null)
-    				eventHitBuilder.SetEventAction (playerName);
-				else
-    				eventHitBuilder.SetEventAction ("No name");
-    			googleAnalytics.LogEvent (eventHitBuilder);
-
-
-    			/*
-				googleAnalytics.LogEvent (new EventHitBuilder ()
-					.SetEventCategory ("LevelReached")
-					.SetEventAction (EnterNameScript.Instance.Name)
-					.SetEventLabel ("")
-					.SetEventValue (3)); //When we create mode for game, it should be entered HERE
-				*/
+				recordLevelReached(GAMetricIdx.LEVELREACHED, GAMetricIdx.LEVELREACHED.ToString(), "0", 2);  //send 2 as metric to show only 3 levels in game
 				SceneManager.LoadScene ("Win");
-
 				//SceneManager.LoadScene ("Level3");
 			}
-		}
-
-
-		if (other.tag == "Door4") {
+			Debug.Log("boss health != 0, cannot go to win scene");
+		} else if (other.tag == "Door4") {
 			if (BossHealthBar.current == 0){
-
-				EventHitBuilder eventHitBuilder = new EventHitBuilder();
-            	eventHitBuilder.SetEventCategory ("Won");
-            	eventHitBuilder.SetEventLabel ("");
-            	//eventHitBuilder.SetEventValue (2);
-            	string playerName = PlayerPrefs.GetString ("CurrentPlayer");
-				if (playerName != null)
-    				eventHitBuilder.SetEventAction (playerName);
-				else
-    				eventHitBuilder.SetEventAction ("No name");
-    			googleAnalytics.LogEvent (eventHitBuilder);
-				
+				recordLevelReached(GAMetricIdx.LEVELREACHED, GAMetricIdx.LEVELREACHED.ToString(), "0", 3);  //send 3 as metric to show only 3 levels in game
 				SceneManager.LoadScene ("Win");
 			}
-		}
-		if (other.tag == "KillPlane") {
+			Debug.Log("boss health != 0, cannot go to win scene");
+		} else if (other.tag == "KillPlane") {
 			//	gameObject.SetActive (false);
 			transform.position = respawnPosition;
 			health.changeBar (5);
-		}
-
-		if (other.tag == "Checkpoint") {
+		} else if (other.tag == "Checkpoint") {
 			respawnPosition = other.transform.position;
+		} else {
+			Debug.Log("collided with something that has no set behavior...tag= " + other.tag);
 		}
-
 	}
 
 	void OnCollisionEnter2D(Collision2D other){
@@ -340,6 +271,32 @@ public class PlayerController : MonoBehaviour {
 	}
 
 
+
+	private void recordLevelReached(GAMetricIdx metric, string label, string value, int gaIdx) {
+		string playerName = getPlayerName();
+
+			googleAnalytics.LogEvent (new EventHitBuilder ()
+			.SetEventCategory (label)   //is shown in Analytics
+			.SetEventAction (playerName)             //is shown in Analytics
+			.SetEventLabel (label)    //is shown in Analytics
+			.SetEventValue (int.Parse(value)) //When we create mode for game, it should be entered HERE
+            .SetCustomMetric (gaIdx, value) //unique index for ModeOfPlay metric in GA, version number
+        );
+	}
+
+
+
+	//helper method for recordLevelReached
+	private string getPlayerName() {
+		/*
+        PlayerPrefs.GetString() returns the value corresponding to key (set in 1st param) in the preference file if it exists
+        get player name stored in PlayerPrefs by key or return string with error message
+        */
+        string keyNotFoundHandler = "No name";
+        string playerName = PlayerPrefs.GetString ("CurrentPlayer", keyNotFoundHandler);
+        Debug.Log("player name = " + playerName);
+        return playerName;
+	}
 
 
 

@@ -125,7 +125,6 @@ MonoBehaviour:
   numBooks: 0
   maxBooks: 4
   numBooksCollected: {fileID: 277699520}
-  currentBook: 0
 --- !u!4 &41138381
 Transform:
   m_ObjectHideFlags: 0

@@ -16,6 +16,7 @@ public class Checkpoint : MonoBehaviour {
 
 	void OnTriggerEnter2D(Collider2D other){
 		if (other.tag == "Player") {
+			Debug.Log("collided with player");
 			checkpointActive = true;
 		}
 	}

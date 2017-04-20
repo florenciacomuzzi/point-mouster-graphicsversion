@@ -3,16 +3,15 @@ using System.Collections;
 using System.Collections.Generic;
 
 public class ButtonPushed : MonoBehaviour {
-
-	public string Name;
-	public int chosen;
-	public int correct_answer;
+	public string btnPushed;
 	public HealthBar Health;
 	public BossHealthBar bossHealth;
 	public PlayerController player;
 	public GameButtons clear;
 	public FeedbackPanel fbPanel;
 	public BossQuestions bossQ;
+
+	private string playerName;
 
 	public GoogleAnalyticsV4 googleAnalytics;
 
@@ -26,6 +25,8 @@ public class ButtonPushed : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
+		playerName = "error with name"; //should be updated with PlayerPrefs
+		btnPushed = "-1"; //error code= -1 
 		feedback = "";
 		bossQ = FindObjectOfType<BossQuestions> ();
 		fbPanel = FindObjectOfType<FeedbackPanel> ();
@@ -58,130 +59,155 @@ public class ButtonPushed : MonoBehaviour {
 			"FAIL"
 		};
 
+		//googleAnalytics.StartSession(); //must have before logging in every object's Start
 	}
 
-		
+	/*
+	Pushed () checks answer, sets feedback display, and closes display after brief pause
+	*/
 	public void Pushed(){
-		correct_answer = int.Parse(bossQ.getAnswer());
-		print ("correct answer inside buttonpushed is");
-		print(correct_answer);
-		Name = gameObject.name;
-		print ("Name is");
-		print (Name);
-		chosen = int.Parse (Name);
+		btnPushed = gameObject.name.ToString();
+		Debug.Log ("user pressed on btn = " + btnPushed);
+		
+		/*
+        PlayerPrefs.GetString() returns the value corresponding to key (set in 1st param) in the preference file if it exists
+        get player name stored in PlayerPrefs by key or return string with error message
+        */
+        string keyNotFoundHandler = "No name";
+        playerName = PlayerPrefs.GetString ("CurrentPlayer", keyNotFoundHandler);
+        Debug.Log("player name = " + playerName);
 
-		int questionID_int = BossQuestions.getQuestionID();//BossQuestions.Instance.indexUsed.Item[questionID_idx];
-		string questionID = questionID_int.ToString();
+        // refer to unique index for custom metric given by GA
+        int rightMetricIdx = 5; 
+        int wrongMetricIdx = 4;
+        int answerMetricIdx = 2;
+        int successStatus = -1; //error if issue with checking answer
+        int errorIdx = 6;
+        const string errorStr = "-1";
+        const int errorCode = -1;
 
-		int version = Version.Instance.getVersion();
 
-
+        Color color = Color.yellow; //yellow = error
+        
 		/*
 		if player chooses correct answer, 
 		boss loses health and the question just answered is added to used questions arr
 		*/
-		if (chosen == (int)correct_answer) {
-			print("chose correct answer");
-
-			//PlayerPrefs.SetString("CurrentPlayer", Name);
-
-			EventHitBuilder eventHitBuilder = new EventHitBuilder();
-            eventHitBuilder.SetEventCategory ("Question Answered Correctly");
-            eventHitBuilder.SetEventLabel (questionID);
-            eventHitBuilder.SetEventValue (chosen);
-            string playerName = PlayerPrefs.GetString ("CurrentPlayer");
-			if (playerName != null)
-    			eventHitBuilder.SetEventAction (playerName);
-			else
-    			eventHitBuilder.SetEventAction ("No name");
-            googleAnalytics.LogEvent (eventHitBuilder);
-            
-            //googleAnalytics.LogEvent(eventHitBuilder);​
-
-            /*
-			googleAnalytics.LogEvent (new EventHitBuilder()
-				.SetEventCategory ("QuestionsAnsweredCorrectly")
-				.SetEventAction (EnterNameScript.Instance.Name)
-				.SetEventLabel (questionID)
-				.SetEventValue (chosen)); //When we create mode for game, it should be entered HERE
-			*/
-
-			feedback = getCorrectFeedback();
-			print("feedback received: " + feedback);
-			player.rightSound.Play ();
-			bossHealth.changeBar (10);
-			//BossQuestions.questionsUsed.Add (StompEnemy.ques);
-			if(version == 1 || version == 3){
-				Debug.Log("positive or pos + neg feedback version");
-				fbPanel.enableFBPanel(feedback, true); //enable feedback panel
-			} else {
-				feedback = "correct";
-				fbPanel.enableFBPanel(feedback, true); //enable feedback panel
-			}
+		int version = Version.Instance.getVersion();
+		string questionInd = "-1";
+		if(isBtnOutOfBounds(btnPushed) || Version.Instance.isVerOutOfRange(version) ) {
+			color = errorProc();
+			version = errorCode;      
+			btnPushed = errorStr;
+			questionInd = errorStr;
+			successStatus = errorCode;
+        } else {
+        	questionInd = CurrentQuestion.currQuestionStaticInstance.getQuestionIndToString();
+        	bool correctInput = CurrentQuestion.currQuestionStaticInstance.isInputAnswer(btnPushed);
+			if (correctInput) {
+				Debug.Log("chose correct answer");
+				player.rightSound.Play ();
+				bossHealth.changeBar (10);
 			
-			clear.ClearQuestionDisplay ();
-			//Pause(10);
-			//yield return new WaitForSeconds(10);
-			Invoke("closePanel", 1);
+				color = Color.green;
+				setCorrectFeedback(version);
+				//BossQuestions.questionsUsed.Add (StompEnemy.ques);
+				successStatus = rightMetricIdx;
 
-	
-		} 
-		else if (chosen != (int)correct_answer)
-		{	
-			print("chose wrong answer");
+				// record player name, version,  button number pushed, right or wrong, question number
+				googleAnalytics.LogEvent( new EventHitBuilder() 
+					.SetEventCategory ("Answer_Correct") //string
+					.SetEventAction(playerName) //string
+					.SetEventLabel("version") //string
+					.SetEventValue(version) //int
+					.SetCustomMetric(successStatus, CurrentQuestion.currQuestionStaticInstance.getQuestionIndToString()) //unique index for right or wrong answer metric in GA, question index
+					.SetCustomMetric(answerMetricIdx, btnPushed) // unique index for playerAnswer metric in GA, btn number pushed
+				);
 
-			EventHitBuilder eventHitBuilder = new EventHitBuilder();
-            eventHitBuilder.SetEventCategory ("Question Answered Incorrectly");
-            eventHitBuilder.SetEventLabel (questionID);
-            eventHitBuilder.SetEventValue (chosen);
-            string playerName = PlayerPrefs.GetString ("CurrentPlayer");
-			if (playerName != null)
-    			eventHitBuilder.SetEventAction (playerName);
-			else
-    			eventHitBuilder.SetEventAction ("No name");
-    		googleAnalytics.LogEvent (eventHitBuilder);
-           
-
-			feedback = getWrongFeedback();
-			print("feedback received: " + getWrongFeedback());
-			//Health.changeBar (10);	
-			player.wrongSound.Play ();
-
-			if(version == 2 || version == 3){
-				Debug.Log("negative or pos + neg feedback version");
-				fbPanel.enableFBPanel(feedback, false); //enable feedback panel
+        		fbPanel.enableFBPanel(feedback, color); 
+        		clear.ClearQuestionDisplay ();
+				Invoke("closePanel", 1);
 			} else {
-				feedback = "incorrect";  //CHANGE VAL OF FEEDBACK
-				fbPanel.enableFBPanel(feedback, false);
-
-			}
+        		Debug.Log("chose wrong answer");
+				player.wrongSound.Play ();
+				//Health.changeBar (10);
 			
-			//yield return new WaitForSeconds(0);
-		} else {
-			Debug.Log("some error occurred");
+				color = Color.red;
+				setIncorrFeedback(version);
+				successStatus = wrongMetricIdx;
+
+				Debug.Log("feedback set: " + feedback);
+        		// record player name, version,  button number pushed, right or wrong, question number
+				googleAnalytics.LogEvent( new EventHitBuilder() 
+					.SetEventCategory ("Answer_Incorrectly") //string
+					.SetEventAction(playerName) //string
+					.SetEventLabel("version") //string
+					.SetEventValue(version) //int
+					.SetCustomMetric(successStatus, CurrentQuestion.currQuestionStaticInstance.getQuestionIndToString()) //unique index for right or wrong answer metric in GA, question index
+					.SetCustomMetric(answerMetricIdx, btnPushed) // unique index for playerAnswer metric in GA, btn number pushed
+				);
+
+        		fbPanel.enableFBPanel(feedback, color); 
+        	}
+        }
+    }
+
+
+    private Color errorProc() {
+        	Debug.Log("some error occurred");
+        	getErrorFB();
+        	return Color.yellow;
+    }
+
+    //returns true if button number out of bounds
+	private bool isBtnOutOfBounds(string button) {
+		int btn = int.Parse(button);
+		if(btn < 0 || btn > 3) {
+			Debug.Log("error, button pressed out of bounds");
+			return true;
 		}
-		//clear.ClearQuestionDisplay ();
+			return false;
 	}
 
+
+    //get string to display as feedback when error occurs
+    private string getErrorFB(){
+        return "setting error display";
+    }
+
+    //called by Pushed() to close FBPanel
 	private void closePanel()
 	{
 		fbPanel.disableFBPanel ();
 	}
 
 
+	/*
+	returns feedback phrase when player answers correctly
+	is called by Pushed()
+	*/
+	private void setCorrectFeedback(int version){
+		switch (version){
+			case 1 : goto case 3; //positive when correct + neutral when incorr ver 
+			case 3 : feedback = getPositiveFeedback(); //positive when correct & neg when incorrect ver
+				     break;
+			default: feedback = "correct"; //neutral only when correct or neutral when correct & incorrect
+					 Debug.Log("getting neutral feedback for correct answer");
+				     break;
+		}
+	}
 
-/*	private IEnumerator Pause(int p) {
-         Time.timeScale = 0.1f;
-         float pauseEndTime = Time.realtimeSinceStartup + 1;
-         while (Time.realtimeSinceStartup < pauseEndTime) {
-              yield return 0;
-         }
-         Time.timeScale = 1;
-    }*/
+	//gets random positive feedback -- helper method for setCorrectFeedback()
+	private string getPositiveFeedback(){
+			int size = correctFB.Length;
+			int pos = Random.Range(0,size-1);
+			return correctFB[pos];
+	}
+
 
 	private IEnumerator Pause(int p)
 	{
-		print ("In pause");
+		Debug.Log ("In pause");
 		Time.timeScale = 0.1f;
 		yield return new WaitForSeconds(p);
 		Time.timeScale = 1;
@@ -189,25 +215,27 @@ public class ButtonPushed : MonoBehaviour {
 	}
 
 
-
-
 	/*
-	returns random feedback phrase when player answers correctly
-	is called by Button Pushed script
+	returns feedback phrase when player answers correctly
+	is called by Pushed()
 	*/
-	public string getCorrectFeedback(){
-		int size = correctFB.Length;
-		int pos = Random.Range(0,size-1);
-		return correctFB[pos];
+	private void setIncorrFeedback(int version){
+		switch (version){
+			case 2 : goto case 3; //negative when incorrect ver & neutral when correct
+			case 3 : feedback = getNegFeedback();  //positive when correct & neg when incorrect ver
+					 break;
+			default: feedback = "incorrect"; //neutral only when correct or neutral when correct & incorrect
+				 	 Debug.Log("getting neutral feedback for incorrect answer");
+				 	 break;
+		}
 	}
 
 
-
 	/*
-	returns random feedback phrase when player answers correctly
-	called by Button Pushed script
+	returns random negative feedback phrase when player answers incorrectly
+	helper method for setIncorrFeedback()
 	*/
-	public string getWrongFeedback(){
+	private string getNegFeedback(){
 		int size = wrongFB.Length;
 		int pos = Random.Range(0,size-1);
 		return wrongFB[pos];

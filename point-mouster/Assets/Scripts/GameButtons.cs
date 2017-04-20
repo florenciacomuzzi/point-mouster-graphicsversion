@@ -4,13 +4,11 @@ using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class GameButtons : MonoBehaviour {
-
 	public GameObject[] showIfPaused;
 	public GameObject[] showIfResumed;
 
 	public QuestionPanel panel;
 	public QuestionCanvas qCanvas;
-
 
 	// Use this for initialization
 	void Start () {
@@ -43,10 +41,8 @@ public class GameButtons : MonoBehaviour {
 	public void PauseGame(){
 		Time.timeScale = 0.0f;
 
-
 		foreach (GameObject psed in showIfPaused)
 			psed.SetActive (true);
-
 
 		foreach (GameObject resmd in showIfResumed)
 			resmd.SetActive (false);
@@ -64,10 +60,10 @@ public class GameButtons : MonoBehaviour {
 
 	public void ClearWordDisplay() {
 		GameObject.FindGameObjectWithTag ("WordDisplay").GetComponent<Text> ().text = "";
-
 		ResumeGame ();
 	}
 
+	//called by ButtonPushed.Pushed to clear display after answered + feedback is given
 	public void ClearQuestionDisplay() {
 		GameObject.FindGameObjectWithTag ("Choice1").SetActive (false);
 		GameObject.FindGameObjectWithTag ("Choice2").SetActive (false);
@@ -77,8 +73,8 @@ public class GameButtons : MonoBehaviour {
 		qCanvas.disableQuestionCanvas ();
 		panel.disable ();
 		ResumeGame ();
-
 	}
+
 	public void Menu()
 	{
 		SceneManager.LoadScene ("Menu");

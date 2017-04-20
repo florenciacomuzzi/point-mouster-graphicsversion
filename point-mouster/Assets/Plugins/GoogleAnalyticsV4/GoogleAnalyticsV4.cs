@@ -45,7 +45,7 @@ public class GoogleAnalyticsV4 : MonoBehaviour {
   [Tooltip("The tracking code to be used for iOS. Example value: UA-XXXX-Y.")]
   public string IOSTrackingCode;
   [Tooltip("The tracking code to be used for platforms other than Android and iOS. Example value: UA-XXXX-Y.")]
-  public string otherTrackingCode;
+  public string otherTrackingCode;  
 
   [Tooltip("The application name. This value should be modified in the " +
       "Unity Player Settings.")]
@@ -64,9 +64,14 @@ public class GoogleAnalyticsV4 : MonoBehaviour {
   [RangedTooltip("The sample rate to use. Only required for Android and" +
       " iOS.", 0, 100)]
   public int sampleFrequency = 100;
-
+  /*
   [Tooltip("The log level. Default is WARNING.")]
   public DebugMode logLevel = DebugMode.WARNING;
+  */
+
+  //setting default log level to Verbose -- Flo 4/20/17
+  [Tooltip("The log level. Default is VERBOSE.")]
+  public DebugMode logLevel = DebugMode.VERBOSE;
 
   [Tooltip("If checked, the IP address of the sender will be anonymized.")]
   public bool anonymizeIP = false;
@@ -147,10 +152,19 @@ public class GoogleAnalyticsV4 : MonoBehaviour {
   // TODO: Error checking on initialization parameters
   private void InitializeTracker() {
     if (!initialized) {
-      instance = this;
-
-      DontDestroyOnLoad(instance);
-
+      instance = this;    
+      DontDestroyOnLoad(instance);    
+                
+      // automatically set app parameters from player settings if they are left empty        
+      if(string.IsNullOrEmpty(productName)) {   
+        productName = Application.productName;    
+      }   
+      if(string.IsNullOrEmpty(bundleIdentifier)) {    
+        bundleIdentifier = Application.bundleIdentifier;    
+      }   
+      if(string.IsNullOrEmpty(bundleVersion)) {   
+        bundleVersion = Application.version;    
+      }
       Debug.Log("Initializing Google Analytics 0.2.");
 #if UNITY_ANDROID && !UNITY_EDITOR
       androidTracker.SetTrackingCode(androidTrackingCode);
@@ -187,6 +201,7 @@ public class GoogleAnalyticsV4 : MonoBehaviour {
       mpTracker.InitializeTracker();
 #endif
       initialized = true;
+      Debug.Log("initialized = true");
       SetOnTracker(Fields.DEVELOPER_ID, "GbOCSs");
     }
   }
@@ -286,6 +301,11 @@ public void DispatchHits() {
 
   public void LogEvent(string eventCategory, string eventAction,
       string eventLabel, long value) {
+    Debug.Log("in LogEvent(params)");
+    Debug.Log("category =" + eventCategory);
+    Debug.Log("eventAction =" + eventAction);
+    Debug.Log("eventLabel =" + eventLabel);
+    Debug.Log("value =" + value);
     EventHitBuilder builder = new EventHitBuilder()
         .SetEventCategory(eventCategory)
         .SetEventAction(eventAction)
@@ -297,6 +317,7 @@ public void DispatchHits() {
 
   public void LogEvent(EventHitBuilder builder) {
     InitializeTracker();
+    Debug.Log("in LogEvent(builder param sent");
     if (builder.Validate() == null) {
       return;
     }

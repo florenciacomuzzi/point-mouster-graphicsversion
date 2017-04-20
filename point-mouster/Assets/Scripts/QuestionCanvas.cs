@@ -3,7 +3,6 @@ using System.Collections;
 using UnityEngine.UI;
 
 public class QuestionCanvas : MonoBehaviour {
-
 	bool enable;
 	public CanvasGroup canvas;
 
@@ -22,13 +21,13 @@ public class QuestionCanvas : MonoBehaviour {
 	}
 
 	public void enableQuestionCanvas(){
-		print ("QuestionCanvas enabled");
+		Debug.Log ("QuestionCanvas enabled");
 		//gameObject.GetComponent<CanvasGroup>().alpha=1;
 		canvas.alpha = 1;
 	}
 
 	public void disableQuestionCanvas(){
-		print ("QuestionCanvas disabled");
+		Debug.Log ("QuestionCanvas disabled");
 		//gameObject.GetComponent<CanvasGroup> ().alpha = 0;
 		canvas.alpha=0;
 
