@@ -61,9 +61,26 @@ To view scripts, *Assets* > *Scripts*
 
 * **EnterNameScript** 
 	* Script is attached to *Canvas* component in EnterName scene.
-	* `public void Continue()` stores user inputted email address, generates a random version number to be used for the rest of the game, and logs Google Analytics event `ModeOfPlay`.
+	* `public void Continue()` stores user inputted email address, generates a random version number to be used for the rest of the game, logs Google Analytics event `ModeOfPlay`, and loads Level1 scene.
 	* ***GoogleAnalyticsV4* instance must be initialized.** 
 
+* **FeedbackPanel**
+	* Script is attached to *FBPanel*, a child component of *Canvas*, in every Boss Battle scene.
+	* `public void enableFBPanel(string feedback, Color color)` is called by *ButtonPushed* script to enable feedback panel with text and text color specified by *feedback* and *color* parameters respectively.
+	* `public void disableFBPanel ()` sets feedback text to empty string and disables the component.
+
+* **GameButtons**
+	* Script handles functionality for pausing/resuming game and clearing displays for both facts and questions.
+	* Attached to all *Canvas* components in all scenes.
+	* `public void ClearQuestionDisplay()` is called by `ButtonPushed.Pushed()` after correct answer input and disables display of multiple choice buttons, disables entire question display, and resumes the game before returning.
+
+* **HealthBar** 
+	* Equivalent of *BossHealthBar* for *Player* component.
+
+* **JITScript** 
+
+	
+	
 
 
     
