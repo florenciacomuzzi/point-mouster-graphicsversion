@@ -17,9 +17,7 @@ To view scripts, *Assets* > *Scripts*
 * **BookScript** 
 	* This script contains a string array `words` with educational facts used for teaching portions in each level. `words` contains the facts used by all levels.
 
-	* ```c# 
-	public void updateBookTracker()
-	``` is called to increment the number of facts/scientists collected by the user. This method calls `setBookTrackerDisplay()` to update the display.
+	* `public void updateBookTracker()` is called to increment the number of facts/scientists collected by the user. This method calls `setBookTrackerDisplay()` to update the display.
 
 	* `private void setBookTrackerDisplay(int curr = 0, int max = 0, bool useDefaultVals = true)` is a helper method called by `BookScript.updateBookTracker()` to set value of `UI.Text numBooksCollected`. Changing the value of numBooksCollected.text changes the value displayed on the canvas.
 
