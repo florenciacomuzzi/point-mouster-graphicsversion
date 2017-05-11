@@ -79,6 +79,15 @@ To view scripts, *Assets* > *Scripts*
 
 * **JITScript** 
 
+```c#
+googleAnalytics.LogEvent (new EventHitBuilder ()
+						.SetEventCategory ("LEVELREACHED")
+						.SetEventAction (playerName)
+						.SetEventLabel ("LEVELREACHED")
+						.SetEventValue (2)	//level #
+					); 
+```
+
 	
 	
 
