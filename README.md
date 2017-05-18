@@ -98,11 +98,12 @@ To view scripts, *Assets* > *Scripts*
 	* Equivalent of *BossHealthBar* for *Player* component.
 
 * **JITScript** 
-	* This Script is used to display playtime instructions to the player.
+	* This script is used to display playtime instructions to the player.
 	* `void OnTriggerEnter2D(Collider2D other)` is called when the player collides with an invisible field. The correct message is displayed in sequence. 
 	
 * **MenuButtons** 
-	*
+	* This script is used to determine where the player advances to, based on the button that triggered this script. It contains a `currLevel` int: to keep track of the current level.
+	* This script is called every time the player completes a level or selects a button from the menu.
 	
 * **MessagePanels** 
 	*
