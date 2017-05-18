@@ -106,7 +106,7 @@ To view scripts, *Assets* > *Scripts*
 	* This script is called every time the player completes a level or selects a button from the menu.
 	
 * **MessagePanels** 
-	*
+	* This script loads the text into the triggered message panel. It contains a `Text`, used for the text to be displayed, and a `GameObject` 
 	
 * **MovingObject** 
 	*
