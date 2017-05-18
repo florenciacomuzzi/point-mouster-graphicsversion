@@ -98,6 +98,24 @@ To view scripts, *Assets* > *Scripts*
 	* Equivalent of *BossHealthBar* for *Player* component.
 
 * **JITScript** 
+* **MenuButtons** 
+* **MessagePanels** 
+* **MovingObject** 
+* **PersistenceManager** 
+* **PersistenceSceneController** 
+* **PlayerController** 
+* **PlayerPersistantData** 
+* **Question** 
+* **QuestionCanvas** 
+* **QuestionPanel** 
+* **ReviewScript** 
+* **SettingsScript** 
+* **SlimeController** 
+* **StompEnemy** 
+* **Version** 
+
+
+
 
 
 
