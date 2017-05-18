@@ -15,6 +15,12 @@ You may download this software for personal use at no cost: [https://store.unity
 ##FAQs
 * **What is the game flow?** The first scene asks the user to enter their email. After clicking on the CONTINUE button, the Level 1 scene is loaded. First, there are two message pop-ups with instructions. Then, the user must move forward and collide with every scientist to collect a fact. Once all facts have been collected, the user moves to a Review scene. After that, a Boss Battle scene is loaded. The user gets unlimited tries for every question. The feedback is determined by the version number the user is playing. After answering all questions the user moves to a Level 2 scene for more facts with a Boss Battle scene immediately after. 
 
+* **How can I change the questions?** All questions are stored within one list in the BossQuestions script. Random questions are chosen from a range corresponding to the current level. Modify the list of questions and ensure the ranges align. Each Question object has a string member for: 
+	** the question text 
+	** individual text for each multiple choice 
+	** a text representing the position of the correct multiple choice answer i.e. Question foo has 4 multiple choice options numbered from 0-3 and the correct answer is at position <some num>
+
+* **How can I change the graphic facts?** All fact graphic files are stored in the directory *Assets > FactImages*. In the Hierarchy, go to the appropriate level scene and find the Canvas object. The drop-down for this object will show a generic `LevelOneFacts` or `LevelTwoFacts` components. The child components represent specific facts. Drag the graphic file into the Sprite-Renderer.
 
 
 
