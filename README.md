@@ -127,7 +127,7 @@ To view scripts, *Assets* > *Scripts*
 	*
 	
 * **Question** 
-	*
+	* A Question class which contains: question, list of choices, and the correct answer. It interacts with the `BossQuestions` script.
 	
 * **QuestionCanvas** 
 	*
