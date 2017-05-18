@@ -3,11 +3,25 @@
 This game was developed with Unity Version 5.5.1.1f1 
 You may download this software for personal use at no cost: [https://store.unity.com](https://store.unity.com)
 
+
 ## Requirements
 * Every scene that logs a Google Analytics event must contain a copy of the `GAv4` prefab. Go to *Assets > Plugins > GoogleAnalyticsV4* and drag the prefab into the Hierarchy of the scene logging events. 
 	* A script that logs an event must include `public GoogleAnalyticsV4 googleAnalytics;` member. To initialize, drag that scene's `GoogleAnalyticsV4` instance into the appropriate field in the Inspector.
 
-* Static instances of classes within scripts can be used to access the script instance from anywhere in the Hierarchy. For example, 
+* Static instances of classes within scripts can be used to access the script instance from anywhere in the Hierarchy. For example, ClassName.nameofStaticInstance.
+
+
+
+##FAQs
+* **What is the game flow?** The first scene asks the user to enter their email. After clicking on the CONTINUE button, the Level 1 scene is loaded. First, there are two message pop-ups with instructions. Then, the user must move forward and collide with every scientist to collect a fact. Once all facts have been collected, the user moves to a Review scene. After that, a Boss Battle scene is loaded. The user gets unlimited tries for every question. The feedback is determined by the version number the user is playing. After answering all questions the user moves to a Level 2 scene for more facts with a Boss Battle scene immediately after. 
+
+
+
+
+
+
+
+
 
 ## Functionalities
 C# scripts are used to define custom functionalities. 

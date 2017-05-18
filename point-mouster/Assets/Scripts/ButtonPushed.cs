@@ -23,6 +23,12 @@ public class ButtonPushed : MonoBehaviour {
 	public string[] correctFB;
 	public string[] wrongFB;
 
+	public enum POINTVALUE {
+			FIRSTATTEMPT = 2, 
+			SECONDATTEMPT = 1,
+    		TOOMANYATTEMPTS = 0
+	};
+
 	// Use this for initialization
 	void Start () {
 		playerName = "error with name"; //should be updated with PlayerPrefs
@@ -59,7 +65,8 @@ public class ButtonPushed : MonoBehaviour {
 			"FAIL"
 		};
 
-		//googleAnalytics.StartSession(); //must have before logging in every object's Start
+		
+
 	}
 
 	/*
@@ -68,6 +75,8 @@ public class ButtonPushed : MonoBehaviour {
 	public void Pushed(){
 		btnPushed = gameObject.name.ToString();
 		Debug.Log ("user pressed on btn = " + btnPushed);
+
+		ScoreManager.Instance.increaseNumAttempts(); //record attempt
 		
 		/*
         PlayerPrefs.GetString() returns the value corresponding to key (set in 1st param) in the preference file if it exists
@@ -105,6 +114,17 @@ public class ButtonPushed : MonoBehaviour {
         	questionInd = CurrentQuestion.currQuestionStaticInstance.getQuestionIndToString();
         	bool correctInput = CurrentQuestion.currQuestionStaticInstance.isInputAnswer(btnPushed);
 			if (correctInput) {
+				/*
+				update score
+				*/
+				if(ScoreManager.Instance.getTimesPushed() == 1) //correct on the first try!
+					ScoreManager.Instance.incrementScore((int)POINTVALUE.FIRSTATTEMPT);
+				else if(ScoreManager.Instance.getTimesPushed() == 2)
+					ScoreManager.Instance.incrementScore((int)POINTVALUE.SECONDATTEMPT);
+				else 
+					ScoreManager.Instance.incrementScore((int)POINTVALUE.TOOMANYATTEMPTS);
+
+
 				Debug.Log("chose correct answer");
 				player.rightSound.Play ();
 				bossHealth.changeBar (10);
@@ -127,6 +147,7 @@ public class ButtonPushed : MonoBehaviour {
         		fbPanel.enableFBPanel(feedback, color); 
         		clear.ClearQuestionDisplay ();
 				Invoke("closePanel", 1);
+				ScoreManager.Instance.resetAttempts(); 
 			} else {
         		Debug.Log("chose wrong answer");
 				player.wrongSound.Play ();

@@ -14,7 +14,6 @@ public class JITScript : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		playerName = "error with name"; //should be updated with PlayerPrefs
-		//googleAnalytics.StartSession(); //must have before logging in every object's Start
 	}
 	
 	// Update is called once per frame

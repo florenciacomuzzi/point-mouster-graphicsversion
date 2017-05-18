@@ -195,11 +195,6 @@ public class BossQuestions : MonoBehaviour {
 //		questions.Add (new Question ("Given the following declaration of a 2D integer array within a class-\n\tint ** nums;\n\tnums = new int*[5]\n\tfor(int i=0; i<5; i++)\n\t\tnums[i] = new int[10];\n\t How would you implement the destructor ? ",
 //			"delete [ ] nums", "delete [ ][ ] nums", "delete *nums", "None of the above", "3"));
 
-		//answerOptions = new List<string>[NumOptions];
-		//answerOptions = new List<string> (); //I Don't knwo what thsi is
-		//questionsUsed = new List<Question> ();
-		//currAnswers = new List<string> (); // I dont' know what this is
-		//parseCorrectWords ();
 		indexUsed = new List<int>();
 	}
 	

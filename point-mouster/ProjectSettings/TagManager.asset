@@ -45,6 +45,7 @@ TagManager:
   - level2fact2TAG
   - level2fact4TAG
   - level2fact5TAG
+  - scoretag
   layers:
   - Default
   - TransparentFX
