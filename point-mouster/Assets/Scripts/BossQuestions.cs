@@ -126,51 +126,28 @@ public class BossQuestions : MonoBehaviour {
 		/* Level 1 Questions */
 
 		//question 1 
-		questions.Add (new Question ("int x;\n
-									int * p;\n
-									p = &x;\n
-									What does p contain?",
+		questions.Add (new Question ("int x;\nint * p;\np = &x;\nWhat does p contain?",
 									"an int", "an array of ints", "the memory address of an int", "the memory address of\nan array of ints", 
 									"2"));
 
 		//question 2
-		questions.Add (new Question ("int x = 7;\n
-									int *p = &x;\n
-									cout << *p;\n
-									What is the output?",
+		questions.Add (new Question ("int x = 7;\nint *p = &x;\ncout \\<< *p;\nWhat is the output?",
 									"&x", "7", "*x", "null", 
 									"1"));
 
 		//question 3
-		questions.Add (new Question ("int x = 7;\n
-									int *p = &x;\n
-									int *q = &x;\n
-									*p = 8;\n
-									*q = 9;\n
-									x = 10;\n
-									cout << *p;\n
-									What is the output?",
+		questions.Add (new Question ("int x = 7;\nint *p = &x;\nint *q = &x;\n*p = 8;\n*q = 9;\nx = 10;\ncout << *p;\nWhat is the output?",
 									"8", "9", "10", "&x", 
 									"2"));
 
 		//question 4
-		questions.Add (new Question ("int x = 7;\n
-									char a = 'a';\n
-									int *p = &x;\n
-									int *q = &a;\n
-									cout << p << " " << q;\n
-									What is the output?",
-									"8", "9", "10", "&x", 
+		questions.Add (new Question ("int x = 7;\nchar a = 'a';\nint *p = &x;\nint *q = &a;\n cout \\<< p \\<< \" \" \\<< q;\n What is the output?",
+									"7 a", "7 7", "a 7", "compiler error", 
 									"3"));
 
-		//question 5 IS REPEAT -- MUST REPLACE
-		questions.Add (new Question ("int x = 7;\n
-									char a = 'a';\n
-									int *p = &x;\n
-									int *q = &a;\n
-									cout << p << " " << q;\n
-									What is the output?",
-									"8", "9", "10", "&x", 
+		//question 5 
+		questions.Add (new Question ("int x = 5;\n int *p = &x;\n *p = 7;\nx = 6;\ncout << *p;\nWhat is the output?",
+									"5", "6", "7", "compiler error", 
 									"3"));
 
 		
@@ -195,45 +172,27 @@ public class BossQuestions : MonoBehaviour {
 		/* Level 2 Questions */
 
 		//question 1
-		questions.Add (new Question ("int x = 8;\n
-									int *p = new int(7);\n
-									p = &x;\n
-									Which does this code depict?",
+		questions.Add (new Question ("int x = 8;\n int *p = new int(7);\n p = &x;\n Which does this code depict?",
 									"a dangling pointer", "a memory leak", "pointer p pointing to 7", "null pointer", 
 									"1"));
 
 		//question 2
-		questions.Add (new Question ("int *p;\n
-									int y = 9;\n
-									if(y > 8){\n
-										\vint x = 7;\n
-										\vp = &x;\n
-									}\n	
-									What does this code depict?",
+		questions.Add (new Question ("int *p;\nint y = 9;\nif(y > 8){\n\vint x = 7;\n\vp = &x;\n}\n	What does this code depict?",
 									"a dangling pointer", "a memory leak", "pointer p pointing to 7", "null pointer", 
 									"2"));
 
 		//question 3
-		questions.Add (new Question ("int a[5] = {1,2,3,4,5};\n
-									int *p = a;\n
-									cout << p + 1;\n
-									What is the output?",
+		questions.Add (new Question ("int a[5] = {1,2,3,4,5};\nint *p = a;\ncout << p + 1;\nWhat is the output?",
 									"1", "2", "a memory address", "none of the above (garbage)", 
 									"2"));
 
 		//question 4
-		questions.Add (new Question ("int a[5] = {1,2,3,4,5};\n
-									int *p = a;\n
-									cout << *(p + 1);\n
-									What is the output?",
+		questions.Add (new Question ("int a[5] = {1,2,3,4,5};\nint *p = a;\ncout << *(p + 1);\nWhat is the output?",
 									"1", "2", "a memory address", "none of the above (garbage)", 
 									"1"));
 
 		//question 5
-		questions.Add (new Question ("int a[5] = {1,2,3,4,5};\n
-									int *p = a;\n
-									cout << *(p + 5);\n
-									What is the output?",
+		questions.Add (new Question ("int a[5] = {1,2,3,4,5};\nint *p = a;\ncout << *(p + 5);\nWhat is the output?",
 									"1", "2", "a memory address", "none of the above (garbage)", 
 									"3"));
 
@@ -260,45 +219,27 @@ public class BossQuestions : MonoBehaviour {
 		/* Level 3 Questions */
 
 		//question 1
-		questions.Add (new Question ("int x = 8;\n
-									int *p = new int(7);\n
-									p = &x;\n
-									Which does this code depict?",
+		questions.Add (new Question ("int x = 8;\nint *p = new int(7);\np = &x;\nWhich does this code depict?",
 									"a dangling pointer", "a memory leak", "pointer p pointing to 7", "null pointer", 
 									"1"));
 
 		//question 2
-		questions.Add (new Question ("int *p;\n
-									int y = 9;\n
-									if(y > 8){\n
-										\vint x = 7;\n
-										\vp = &x;\n
-									}\n	
-									What does this code depict?",
+		questions.Add (new Question ("int *p;\nint y = 9;\nif(y > 8){\n\vint x = 7;\n\vp = &x;\n}\n	What does this code depict?",
 									"a dangling pointer", "a memory leak", "pointer p pointing to 7", "null pointer", 
 									"2"));
 
 		//question 3
-		questions.Add (new Question ("int a[5] = {1,2,3,4,5};\n
-									int *p = a;\n
-									cout << p + 1;\n
-									What is the output?",
+		questions.Add (new Question ("int a[5] = {1,2,3,4,5};\nint *p = a;\ncout << p + 1;\nWhat is the output?",
 									"1", "2", "a memory address", "none of the above (garbage)", 
 									"2"));
 
 		//question 4
-		questions.Add (new Question ("int a[5] = {1,2,3,4,5};\n
-									int *p = a;\n
-									cout << *(p + 1);\n
-									What is the output?",
+		questions.Add (new Question ("int a[5] = {1,2,3,4,5};\nint *p = a;\ncout << *(p + 1);\nWhat is the output?",
 									"1", "2", "a memory address", "none of the above (garbage)", 
 									"1"));
 
 		//question 5
-		questions.Add (new Question ("int a[5] = {1,2,3,4,5};\n
-									int *p = a;\n
-									cout << *(p + 5);\n
-									What is the output?",
+		questions.Add (new Question ("int a[5] = {1,2,3,4,5};\nint *p = a;\ncout << *(p + 5);\nWhat is the output?",
 									"1", "2", "a memory address", "none of the above (garbage)", 
 									"3"));
 
