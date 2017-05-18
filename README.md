@@ -106,11 +106,11 @@ To view scripts, *Assets* > *Scripts*
 	* This script is called every time the player completes a level or selects a button from the menu.
 	
 * **MessagePanels** 
-	* This script loads the text into the triggered message panel. It contains a `Text`, used for the text to be displayed, and a `GameObject` 
+	* This script loads the text into the triggered message panel. It contains a `WordDisplay` text, used for the text to be displayed, and a `GameObject` button.
 	
 * **MovingObject** 
 	* This script is used to control the moving platforms in the game, by moving them into positions specified and at the soeed specified. 
-	* It contains a `GameObject` which is the object that is moving. A `Transform` for the starting position, a `Transform` for the ending position. A `float` which specifies the speed of movement, and a `Vector3` which specifies the target position. 
+	* It contains a `objectToMove` GameObject which is the object that is moving. A `startPoint` Transform for the starting position, an `endPoint` Transform for the ending position. A `moveSpeed` which specifies the speed of movement, and a `currentTarget` Vector3 which specifies the target position. 
 	
 	
 * **PersistenceManager** 
