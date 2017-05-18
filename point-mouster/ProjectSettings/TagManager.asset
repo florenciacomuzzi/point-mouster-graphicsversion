@@ -33,6 +33,18 @@ TagManager:
   - Door4
   - FeedbackDisplay
   - level2Door
+  - level1factTAG
+  - level1fact1TAG
+  - level1fact2TAG
+  - level1fact3TAG
+  - level1fact4TAG
+  - level1fact5TAG
+  - level2factTAG
+  - level2fact1TAG
+  - level2fact3TAG
+  - level2fact2TAG
+  - level2fact4TAG
+  - level2fact5TAG
   layers:
   - Default
   - TransparentFX

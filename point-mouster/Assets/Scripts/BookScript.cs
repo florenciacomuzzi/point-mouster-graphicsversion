@@ -192,8 +192,8 @@ public class BookScript : MonoBehaviour {
 
 
 	/*
-	pickWord is called by PlayerController script
-	when player collides with a book
+	pickWord is called by PlayerController script's prepNextWord() 
+	when player collides with a scientist/book
 	method generates random number 
 	*/
 	public string pickWord(){

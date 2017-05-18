@@ -10,6 +10,12 @@ public class GameButtons : MonoBehaviour {
 	public QuestionPanel panel;
 	public QuestionCanvas qCanvas;
 
+	/*
+	used for fact display -- graphics version
+	*/
+	Scene currentLevel;
+	string levelName;
+
 	// Use this for initialization
 	void Start () {
 		qCanvas = FindObjectOfType<QuestionCanvas> ();
@@ -24,6 +30,9 @@ public class GameButtons : MonoBehaviour {
 		showIfResumed = GameObject.FindGameObjectsWithTag("WhenResumed");
 		foreach (GameObject resmd in showIfResumed)
 			resmd.SetActive (true);
+
+		currentLevel = SceneManager.GetActiveScene ();
+		levelName = currentLevel.name;
 	}
 
 	// Update is called once per frame
@@ -59,7 +68,17 @@ public class GameButtons : MonoBehaviour {
 	}
 
 	public void ClearWordDisplay() {
-		GameObject.FindGameObjectWithTag ("WordDisplay").GetComponent<Text> ().text = "";
+		if (levelName == "Level1") {
+			Debug.Log("in ClearWordDisplay.. it's level 1 so should clear display");	
+			GameObject go = GameObject.FindGameObjectWithTag ("level1factTAG");
+			SpriteRenderer sr = go.GetComponent<SpriteRenderer> ();
+			if (sr.enabled)
+				sr.enabled = false;
+		}
+
+		
+		GameObject.FindGameObjectWithTag ("WordDisplay").GetComponent<Text> ().text = "";//to indicate no fact there
+
 		ResumeGame ();
 	}
 

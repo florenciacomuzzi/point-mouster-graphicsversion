@@ -14,8 +14,6 @@ public class PlayerController : MonoBehaviour {
 	*/
 
 	public GameButtons gameButton;// object so player can pause game
-	//public BookScript currBook;
-
 	public GoogleAnalyticsV4 googleAnalytics;
 
 	public float moveSpeed; // how fast the player moves 
@@ -64,23 +62,32 @@ public class PlayerController : MonoBehaviour {
 	};
 
 
+	 //Claudia and Sturm added when implementing graphics
+	Scene currentLevel;
+	string levelName;
+    public int graphicalFactNumber;
+
+
 	// Use this for initialization
 	void Start () {
-		//googleAnalytics.StartSession(); //must have before logging in every object's Start
         facingRight = true;
 		health = FindObjectOfType<HealthBar> ();
 		myRigidBody = GetComponent<Rigidbody2D> (); // rigid body for physics
 		myAnim = GetComponent<Animator> (); // animator for anim changes
 		//numBooksCollected.text = "Books: " + numBooks + "/" + maxBooks;
 		isPaused = false;
-		wordDisplay.text = "What will you learn today?";
+		//wordDisplay.text = "What will you learn today?";
 		respawnPosition = new Vector3 (-9.42f, 0.56f, 0);
 
 		if(gameButton == null){
 			Debug.Log("gameButton == null");
 			//gameButton = GameObject.FindGameObjectsWithTag("CanvasTag");
 		}
-		//googleAnalytics.StartSession();
+
+		//added when implementing graphics
+		graphicalFactNumber = 1;  
+		currentLevel = SceneManager.GetActiveScene ();
+		levelName = currentLevel.name;
 	}
 
     void Flip(float horizontal)//flip to go backward
@@ -93,6 +100,7 @@ public class PlayerController : MonoBehaviour {
             transform.localScale = theScale;
         }
     }
+    
 	// Update is called once per frame
 	void Update () {
 		//pressing x closes canvas 
@@ -149,7 +157,6 @@ public class PlayerController : MonoBehaviour {
 
 		}
 
-
 		//Sets variables in order to change animations
 		myAnim.SetFloat("Speed", Mathf.Abs(myRigidBody.velocity.x));
 		myAnim.SetBool ("Grounded", isGrounded);
@@ -177,6 +184,8 @@ public class PlayerController : MonoBehaviour {
 
 	//Sent when another object enters a trigger collider attached to this object
 	void OnTriggerEnter2D(Collider2D other){
+
+
 		// handle respawn
 		if (other.tag == "Book") {
 			Debug.Log("player collided with book");
@@ -184,6 +193,27 @@ public class PlayerController : MonoBehaviour {
 			collectSound.Play ();
 			disableComponent(other);
 			prepNextWord();
+			//Claudia and Sturm - trying to display the graphical fact
+			if (levelName == "Level1") {	
+				wordDisplay.text = "_";  //word hints shouldn't show but should indicate something to display (for graphics)
+	        	/*
+				create tag for current fact to search with
+	        	*/
+	        	string factTag = "level1fact" + graphicalFactNumber + "TAG";
+				Debug.Log ("In PlayerController, factTag = " + factTag);
+
+	        	GameObject generalFact = GameObject.FindGameObjectWithTag("level1factTAG");//general fact in level 1
+				Debug.Log("In PlayerController, generalFact = " + generalFact);
+				//set correct sprite by changing the renderer
+				SpriteRenderer sr = generalFact.GetComponent<SpriteRenderer>();
+				Debug.Log("In PlayerController, sr = " + sr);
+				//set the correct sprite in the general fact
+				sr.sprite = GameObject.FindGameObjectWithTag (factTag).GetComponent<SpriteRenderer> ().sprite;
+	        	sr.enabled = true;
+				Debug.Log("In PlayerController, sr.enabled = " + sr.enabled);
+
+	        	graphicalFactNumber++;  //for next fact
+			}
 			Destroy (other.gameObject, 1);  //destroy book
 			Time.timeScale = 0.0f;
 		} else if (other.tag == "Door") {
