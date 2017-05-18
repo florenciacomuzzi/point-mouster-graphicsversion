@@ -106,6 +106,7 @@ public class BossQuestions : MonoBehaviour {
 	public static List<string> currAnswers; //Array used to make sure answers aren't repeated
 	public string[] multiple_choice; //Array of multiple choice options
 	public List<Question> questions;
+
 	
 	//public string[] negFB;
 
@@ -125,6 +126,56 @@ public class BossQuestions : MonoBehaviour {
 		/* Level 1 Questions */
 
 		//question 1 
+		questions.Add (new Question ("int x;\n
+									int * p;\n
+									p = &x;\n
+									What does p contain?",
+									"an int", "an array of ints", "the memory address of an int", "the memory address of\nan array of ints", 
+									"2"));
+
+		//question 2
+		questions.Add (new Question ("int x = 7;\n
+									int *p = &x;\n
+									cout << *p;\n
+									What is the output?",
+									"&x", "7", "*x", "null", 
+									"1"));
+
+		//question 3
+		questions.Add (new Question ("int x = 7;\n
+									int *p = &x;\n
+									int *q = &x;\n
+									*p = 8;\n
+									*q = 9;\n
+									x = 10;\n
+									cout << *p;\n
+									What is the output?",
+									"8", "9", "10", "&x", 
+									"2"));
+
+		//question 4
+		questions.Add (new Question ("int x = 7;\n
+									char a = 'a';\n
+									int *p = &x;\n
+									int *q = &a;\n
+									cout << p << " " << q;\n
+									What is the output?",
+									"8", "9", "10", "&x", 
+									"3"));
+
+		//question 5 IS REPEAT -- MUST REPLACE
+		questions.Add (new Question ("int x = 7;\n
+									char a = 'a';\n
+									int *p = &x;\n
+									int *q = &a;\n
+									cout << p << " " << q;\n
+									What is the output?",
+									"8", "9", "10", "&x", 
+									"3"));
+
+		
+		/* OLD LEVEL 1 QUESTIONS 
+		//question 1 
 		questions.Add (new Question ("Choose the correct statement to define a 1d array of pointers to double with 10 elements. ",
 			"*double ptrarr[10]", "double *[10] ptrarr", "double int *ptrarr[10]", "double *prtarr[10]", "3"));
 		//question 2
@@ -139,9 +190,56 @@ public class BossQuestions : MonoBehaviour {
 		//question 5
 		questions.Add (new Question ("What problem/error will likely result from the following code?\n\tint * ptr = NULL;\n\t{ \nint x; \t\nptr = &x;\n}\n",
 			"Memory Leak", "Type Mismatch", "Dangling Pointer", "Segmentation Fault", "2"));
+		*/
 
 		/* Level 2 Questions */
 
+		//question 1
+		questions.Add (new Question ("int x = 8;\n
+									int *p = new int(7);\n
+									p = &x;\n
+									Which does this code depict?",
+									"a dangling pointer", "a memory leak", "pointer p pointing to 7", "null pointer", 
+									"1"));
+
+		//question 2
+		questions.Add (new Question ("int *p;\n
+									int y = 9;\n
+									if(y > 8){\n
+										\vint x = 7;\n
+										\vp = &x;\n
+									}\n	
+									What does this code depict?",
+									"a dangling pointer", "a memory leak", "pointer p pointing to 7", "null pointer", 
+									"2"));
+
+		//question 3
+		questions.Add (new Question ("int a[5] = {1,2,3,4,5};\n
+									int *p = a;\n
+									cout << p + 1;\n
+									What is the output?",
+									"1", "2", "a memory address", "none of the above (garbage)", 
+									"2"));
+
+		//question 4
+		questions.Add (new Question ("int a[5] = {1,2,3,4,5};\n
+									int *p = a;\n
+									cout << *(p + 1);\n
+									What is the output?",
+									"1", "2", "a memory address", "none of the above (garbage)", 
+									"1"));
+
+		//question 5
+		questions.Add (new Question ("int a[5] = {1,2,3,4,5};\n
+									int *p = a;\n
+									cout << *(p + 5);\n
+									What is the output?",
+									"1", "2", "a memory address", "none of the above (garbage)", 
+									"3"));
+
+		/*
+		OLD LEVEL 2 QUESTIONS
+		
 		//question 1 
 		questions.Add (new Question ("Which symbol represents the indirection operator? ",
 			"*", ".", "->", "&", "0"));
@@ -157,9 +255,55 @@ public class BossQuestions : MonoBehaviour {
 		//question 5
 		questions.Add (new Question ("What symbol represents the address-of operator? ",
 			"&", "*", "->", "None of the above", "0"));
-		
+		*/
+
 		/* Level 3 Questions */
 
+		//question 1
+		questions.Add (new Question ("int x = 8;\n
+									int *p = new int(7);\n
+									p = &x;\n
+									Which does this code depict?",
+									"a dangling pointer", "a memory leak", "pointer p pointing to 7", "null pointer", 
+									"1"));
+
+		//question 2
+		questions.Add (new Question ("int *p;\n
+									int y = 9;\n
+									if(y > 8){\n
+										\vint x = 7;\n
+										\vp = &x;\n
+									}\n	
+									What does this code depict?",
+									"a dangling pointer", "a memory leak", "pointer p pointing to 7", "null pointer", 
+									"2"));
+
+		//question 3
+		questions.Add (new Question ("int a[5] = {1,2,3,4,5};\n
+									int *p = a;\n
+									cout << p + 1;\n
+									What is the output?",
+									"1", "2", "a memory address", "none of the above (garbage)", 
+									"2"));
+
+		//question 4
+		questions.Add (new Question ("int a[5] = {1,2,3,4,5};\n
+									int *p = a;\n
+									cout << *(p + 1);\n
+									What is the output?",
+									"1", "2", "a memory address", "none of the above (garbage)", 
+									"1"));
+
+		//question 5
+		questions.Add (new Question ("int a[5] = {1,2,3,4,5};\n
+									int *p = a;\n
+									cout << *(p + 5);\n
+									What is the output?",
+									"1", "2", "a memory address", "none of the above (garbage)", 
+									"3"));
+
+		/*
+		OLD LEVEL 3 QUESTIONS
 		//question 1
 		questions.Add (new Question ("You declare an array, arr, of size 10. How would you access the value at the 4th index?",
 			"arr[10]", "*(arr+4)", "It is impossible to access the value at the 4th position.", "*arr", "1")); 
@@ -175,7 +319,8 @@ public class BossQuestions : MonoBehaviour {
 		//question 5
 		questions.Add (new Question (" Given the function: \nbool isFound(const char *chrPtr, char c){\n}\nWhich of the following would be the correct declaration for declaring a variable which will traverse 'const chrPtr *someText' ?\n",
 			"const *ptr;", "const char ptr;", "const de *ptr;", "char *ptr;", "2"));
-
+		*/
+			
 		/* Unused Questions */
 
 //		questions.Add (new Question ("Choose the correct statement to free a 1d array of pointers, ptrarr to double with 10 elements.",
