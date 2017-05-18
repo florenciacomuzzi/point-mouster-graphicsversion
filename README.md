@@ -112,15 +112,15 @@ To view scripts, *Assets* > *Scripts*
 	* This script is used to control the moving platforms in the game, by moving them into positions specified and at the soeed specified. 
 	* It contains a `objectToMove` GameObject which is the object that is moving. A `startPoint` Transform for the starting position, an `endPoint` Transform for the ending position. A `moveSpeed` which specifies the speed of movement, and a `currentTarget` Vector3 which specifies the target position. 
 	
-	
 * **PersistenceManager** 
-	*
+	* 
 	
 * **PersistenceSceneController** 
 	*
 	
 * **PlayerController** 
-	*
+	* This script is used for all technical aspects of the player and its controls.
+	* It contains many members since it controls a lot of technicalities of the player: a `moveSpeed` float, specifies the speed the player should move at.`jumpSpeed` float, specifies how  high the player should jump. `numBooks` int, the number of scientists/facts the player collected. `maxBooks` int, the total number of scientists/facts. `numBooksCollected` Text object, to display to the player so they see the progress. `myRigidBody` Rigidbody2D, used so the player can move and jump. `myAnim` Animator, used to set values to cause player animations.`facingRight` bool, used to keep the player facing to the right. `respanPosition` Vector3, used to determine the position where the player will respawn. `groundCheck` Transform, used to check if the player is on the 'ground'. `groundCheckRadius`float, which is the radius of the ground check space. `isGrounded` and `isJumping` bool, to know if the player is on the ground or jumping.
 	
 * **PlayerPersistantData** 
 	*
