@@ -136,7 +136,8 @@ To view scripts, *Assets* > *Scripts*
 	*
 	
 * **ReviewScript** 
-	*
+	* This script loads the review words to the Review Scene.
+	* It contains an `Instance` of ReviewScript
 	
 * **SettingsScript** 
 	*
