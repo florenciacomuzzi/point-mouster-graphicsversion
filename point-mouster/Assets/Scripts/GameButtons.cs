@@ -74,13 +74,17 @@ public class GameButtons : MonoBehaviour {
 			SpriteRenderer sr = go.GetComponent<SpriteRenderer> ();
 			if (sr.enabled)
 				sr.enabled = false;
+		} else if (levelName == "Level2") {
+			Debug.Log("in ClearWordDisplay.. it's level 2 so should clear display");	
+			GameObject go = GameObject.FindGameObjectWithTag ("level2factTAG");
+			SpriteRenderer sr = go.GetComponent<SpriteRenderer> ();
+			if (sr.enabled)
+				sr.enabled = false;
 		}
-
-		
 		GameObject.FindGameObjectWithTag ("WordDisplay").GetComponent<Text> ().text = "";//to indicate no fact there
-
 		ResumeGame ();
 	}
+	
 
 	//called by ButtonPushed.Pushed to clear display after answered + feedback is given
 	public void ClearQuestionDisplay() {

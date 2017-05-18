@@ -14,7 +14,7 @@ public class CurrentQuestion : MonoBehaviour {
 		if(Instance == null){
 			Debug.Log("CurrentQuestion.ownInstance == null");
 		}
-		if(iscurrQuestionStaticInstanceNull()){
+		if(currQuestionStaticInstance == null){
 			Debug.Log("BossQuestions.Question instance == null");
 		}
 		questionInd = -1;

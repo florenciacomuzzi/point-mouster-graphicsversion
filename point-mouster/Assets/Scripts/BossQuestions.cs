@@ -217,7 +217,7 @@ public class BossQuestions : MonoBehaviour {
 
 	//checks if submitted correct answer for current question
 	public bool checkInput(string btnPushed) {
-		if(!CurrentQuestion.currQuestionStaticInstance.iscurrQuestionStaticInstanceNull()) {
+		if(CurrentQuestion.currQuestionStaticInstance != null) {
 			if(btnPushed.Equals(CurrentQuestion.currQuestionStaticInstance.getQuestInstance().getQuestionAnswer())) {
 				return true; //user inputted correct answer
 			}
@@ -271,7 +271,7 @@ public class BossQuestions : MonoBehaviour {
 
 	// updates current question with new question chosen
 	private void updateCurrentQuestion(int chosenQuestIndex) {
-		if( !CurrentQuestion.currQuestionStaticInstance.iscurrQuestionStaticInstanceNull() ){
+		if(CurrentQuestion.currQuestionStaticInstance == null ){
 			Debug.Log("cannot update CurrentQuestion due to error");
 		}
 		if(isIndOutOfBounds(chosenQuestIndex) ) {

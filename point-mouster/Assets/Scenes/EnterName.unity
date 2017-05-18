@@ -799,7 +799,7 @@ GameObject:
   - component: {fileID: 1284519628}
   - component: {fileID: 1284519627}
   m_Layer: 0
-  m_Name: CurrentQuestion
+  m_Name: CurrentQuestionHolder
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

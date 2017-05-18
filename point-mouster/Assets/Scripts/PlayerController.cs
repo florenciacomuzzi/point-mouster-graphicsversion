@@ -160,21 +160,18 @@ public class PlayerController : MonoBehaviour {
 		//Sets variables in order to change animations
 		myAnim.SetFloat("Speed", Mathf.Abs(myRigidBody.velocity.x));
 		myAnim.SetBool ("Grounded", isGrounded);
-
-//		if (BookScript.bookControl.numBooks == BookScript.bookControl.maxBooks) {
-//
-//				BookScript.bookControl.setReviewWords ();
-//				SceneManager.LoadScene ("Review1");
-//		}
-
 	}
+
+
 	
 	//method used to disable book
 	private void disableComponent(Collider2D component) {
 		Debug.Log("in disableComponent");
 		component.GetComponent<SpriteRenderer> ().enabled = false;
 		component.GetComponent<BoxCollider2D> ().enabled = false;
-	}		
+	}	
+
+
 
 	//helper method: after user collects a book, another book is prepped for display
 	private void prepNextWord() {
@@ -182,41 +179,55 @@ public class PlayerController : MonoBehaviour {
 		wordDisplay.text = BookScript.bookControl.pickWord (); 
 	}
 
-	//Sent when another object enters a trigger collider attached to this object
+
+	/*
+	Sent when another object enters a trigger collider attached to this object
+	*/
 	void OnTriggerEnter2D(Collider2D other){
-
-
 		// handle respawn
 		if (other.tag == "Book") {
+			/*
+			when collide with scientist: update counter display, disable scientist display,
+			then, find parent component for all child facts (this component is given a general name and is not numbered), 
+			then, build a tag with a number and use it to search thru fact components
+			finally, enable sprite display of found fact
+			*/
 			Debug.Log("player collided with book");
 			BookScript.bookControl.updateBookTracker();
 			collectSound.Play ();
 			disableComponent(other);
 			prepNextWord();
-			//Claudia and Sturm - trying to display the graphical fact
+
+			wordDisplay.text = "_";  //word hints shouldn't show but should indicate something to display (for graphics)
+			GameObject generalFact = GameObject.FindGameObjectWithTag("level1factTAG"); //defaults to level1
+			string factTag = "level1factTAG"; //defaul to 0th fact
 			if (levelName == "Level1") {	
-				wordDisplay.text = "_";  //word hints shouldn't show but should indicate something to display (for graphics)
 	        	/*
 				create tag for current fact to search with
 	        	*/
-	        	string factTag = "level1fact" + graphicalFactNumber + "TAG";
+	        	factTag = "level1fact" + graphicalFactNumber + "TAG";
 				Debug.Log ("In PlayerController, factTag = " + factTag);
 
-	        	GameObject generalFact = GameObject.FindGameObjectWithTag("level1factTAG");//general fact in level 1
+	        	generalFact = GameObject.FindGameObjectWithTag("level1factTAG");//general fact in level 1
 				Debug.Log("In PlayerController, generalFact = " + generalFact);
-				//set correct sprite by changing the renderer
-				SpriteRenderer sr = generalFact.GetComponent<SpriteRenderer>();
-				Debug.Log("In PlayerController, sr = " + sr);
-				//set the correct sprite in the general fact
-				sr.sprite = GameObject.FindGameObjectWithTag (factTag).GetComponent<SpriteRenderer> ().sprite;
-	        	sr.enabled = true;
-				Debug.Log("In PlayerController, sr.enabled = " + sr.enabled);
-
-	        	graphicalFactNumber++;  //for next fact
+			} else if(levelName == "Level2") {
+				factTag = "level2fact" + graphicalFactNumber + "TAG";
+				Debug.Log ("In PlayerController, factTag = " + factTag);
+				generalFact = GameObject.FindGameObjectWithTag("level2factTAG");
 			}
+			//set correct sprite by changing the renderer
+			SpriteRenderer sr = generalFact.GetComponent<SpriteRenderer>();
+			Debug.Log("In PlayerController, sr = " + sr);
+			//set the correct sprite in the general fact
+			sr.sprite = GameObject.FindGameObjectWithTag (factTag).GetComponent<SpriteRenderer> ().sprite;
+	        sr.enabled = true;
+			Debug.Log("In PlayerController, sr.enabled = " + sr.enabled);
+		    graphicalFactNumber++;  //for next fact
 			Destroy (other.gameObject, 1);  //destroy book
 			Time.timeScale = 0.0f;
-		} else if (other.tag == "Door") {
+		}
+
+		if (other.tag == "Door") {
 			Debug.Log("user collided with door");
 			if (BookScript.bookControl.numBooksCheck ()) {
 				Debug.Log("user collected all facts");
@@ -230,7 +241,9 @@ public class PlayerController : MonoBehaviour {
 			} else {
 				Debug.Log ("ERROR User is at door but did not collect all books");
 			}
-		} else if (other.tag == "Door2") { //boss 1 door
+		}
+
+		if (other.tag == "Door2") { //boss 1 door
 			Debug.Log("collided with door2...boss 1 door");
 			if (BossHealthBar.current == 0) {
 				Debug.Log ("boss health=0... log event and load scene 2");
@@ -240,7 +253,10 @@ public class PlayerController : MonoBehaviour {
 				SceneManager.LoadScene("Level2");
 			} 
 			Debug.Log("boss health != 0.... cannot load level2");
-		} else if (other.tag == "level2Door") {
+		}
+
+
+		if (other.tag == "level2Door") {
 			Debug.Log("collided with level 2 door");
 			if (BookScript.bookControl.numBooksCheck ()) {
 				Debug.Log("user collected all facts");
@@ -256,28 +272,36 @@ public class PlayerController : MonoBehaviour {
 			} else {
 				Debug.Log ("ERROR User is at door but did not collect all books");
 			}
-		} else if (other.tag == "Door3") {
+		}
+
+		if (other.tag == "Door3") {
 			if (BossHealthBar.current == 0){
 				recordLevelReached(GAMetricIdx.LEVELREACHED, GAMetricIdx.LEVELREACHED.ToString(), "0", 2);  //send 2 as metric to show only 3 levels in game
 				SceneManager.LoadScene ("Win");
 				//SceneManager.LoadScene ("Level3");
 			}
 			Debug.Log("boss health != 0, cannot go to win scene");
-		} else if (other.tag == "Door4") {
+		}
+
+		if (other.tag == "Door4") {
 			if (BossHealthBar.current == 0){
 				recordLevelReached(GAMetricIdx.LEVELREACHED, GAMetricIdx.LEVELREACHED.ToString(), "0", 3);  //send 3 as metric to show only 3 levels in game
 				SceneManager.LoadScene ("Win");
 			}
 			Debug.Log("boss health != 0, cannot go to win scene");
-		} else if (other.tag == "KillPlane") {
+		} 
+
+		if (other.tag == "KillPlane") {
 			//	gameObject.SetActive (false);
 			transform.position = respawnPosition;
 			health.changeBar (5);
-		} else if (other.tag == "Checkpoint") {
-			respawnPosition = other.transform.position;
-		} else {
-			Debug.Log("collided with something that has no set behavior...tag= " + other.tag);
 		}
+
+		if (other.tag == "Checkpoint") {
+			respawnPosition = other.transform.position;
+		} 
+
+		Debug.Log("collided with tag= " + other.tag);
 	}
 
 	void OnCollisionEnter2D(Collision2D other){
