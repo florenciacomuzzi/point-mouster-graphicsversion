@@ -179,7 +179,7 @@ public class BossQuestions : MonoBehaviour {
 		//question 2
 		questions.Add (new Question ("int *p;\nint y = 9;\nif(y > 8){\n\vint x = 7;\n\vp = &x;\n}\n	What does this code depict?",
 									"a dangling pointer", "a memory leak", "pointer p pointing to 7", "null pointer", 
-									"2"));
+									"0"));
 
 		//question 3
 		questions.Add (new Question ("int a[5] = {1,2,3,4,5};\nint *p = a;\ncout << p + 1;\nWhat is the output?",
