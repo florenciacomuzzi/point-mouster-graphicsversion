@@ -148,7 +148,7 @@ public class BossQuestions : MonoBehaviour {
 		//question 5 
 		questions.Add (new Question ("int x = 5;\n int *p = &x;\n *p = 7;\nx = 6;\ncout << *p;\nWhat is the output?",
 									"5", "6", "7", "compiler error", 
-									"3"));
+									"1"));
 
 		
 		/* OLD LEVEL 1 QUESTIONS 
